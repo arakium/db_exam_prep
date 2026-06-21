@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دليل الامتحان – قواعد البيانات المتقدمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #2d3748;
+    --accent: #58a6ff;
+    --accent2: #f78166;
+    --accent3: #3fb950;
+    --accent4: #d2a8ff;
+    --gold: #e3b341;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --danger: #f85149;
+    --warn: #f0883e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    line-height: 1.9;
+    padding: 0 1rem 4rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 3rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--muted);
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+  }
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .badge {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .badge.hot { border-color: var(--accent2); color: var(--accent2); }
+  .badge.ok  { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ── NAV ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.75rem; letter-spacing: 0.1em; }
+  .toc ol { padding-right: 1.25rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 0.92rem; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── SECTION ── */
+  section { margin-bottom: 3rem; }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #fff;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 1.25rem;
+    display: inline-block;
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent4);
+    margin: 1.5rem 0 0.6rem;
+  }
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 1rem 0 0.4rem;
+  }
+
+  p { margin-bottom: 0.75rem; color: #cdd9e5; }
+  ul, ol { padding-right: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; color: #cdd9e5; }
+  strong { color: #fff; font-weight: 700; }
+  em { color: var(--gold); font-style: normal; }
+
+  /* ── CODE ── */
+  pre, code {
+    font-family: 'IBM Plex Mono', monospace;
+    direction: ltr;
+    text-align: left;
+  }
+  pre {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.83rem;
+    line-height: 1.6;
+    margin: 0.75rem 0 1rem;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #79c0ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #f2cc60; }
+  .tbl { color: #7ee787; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+  }
+  .card.blue  { border-right: 3px solid var(--accent); }
+  .card.red   { border-right: 3px solid var(--danger); }
+  .card.green { border-right: 3px solid var(--accent3); }
+  .card.gold  { border-right: 3px solid var(--gold); }
+  .card.purple{ border-right: 3px solid var(--accent4); }
+  .card-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .card.blue   .card-title { color: var(--accent); }
+  .card.red    .card-title { color: var(--danger); }
+  .card.green  .card-title { color: var(--accent3); }
+  .card.gold   .card-title { color: var(--gold); }
+  .card.purple .card-title { color: var(--accent4); }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0 1rem;
+    font-size: 0.88rem;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 0.55rem 0.85rem;
+    text-align: right;
+    border: 1px solid var(--border);
+    font-weight: 700;
+  }
+  td {
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--border);
+    color: #cdd9e5;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #121820; }
+
+  /* ── SPECIAL BLOCKS ── */
+  .trap-box {
+    background: #1a0e0e;
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    margin: 0.6rem 0;
+  }
+  .trap-box .label { color: var(--danger); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  
+  .forget-box {
+    background: #0f1a10;
+    border: 1px solid var(--accent3);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    margin: 0.6rem 0;
+  }
+  .forget-box .label { color: var(--accent3); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+
+  .mnemonic {
+    background: #1a1500;
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    margin: 0.6rem 0;
+  }
+  .mnemonic .label { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+
+  .q-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+  }
+  .q-num {
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+  .q-text { font-weight: 700; color: #fff; margin-bottom: 0.6rem; }
+  .q-answer { color: #cdd9e5; font-size: 0.9rem; }
+
+  .cheat-sheet {
+    background: #080d14;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  .cheat-sheet h2 { border-bottom-color: var(--gold); color: var(--gold); }
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .cheat-item {
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .cheat-item h4 { margin-top: 0; }
+
+  .revision-box {
+    background: #0d1a10;
+    border: 2px solid var(--accent3);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .priority-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.4rem 0;
+  }
+  .priority-label { width: 140px; font-size: 0.88rem; color: #cdd9e5; flex-shrink: 0; }
+  .bar-track {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+
+  .join-visual {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+  }
+  .join-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    flex: 1 1 180px;
+    text-align: center;
+  }
+  .join-card .jname { font-weight: 700; color: var(--accent4); font-size: 0.9rem; margin-bottom: 0.35rem; }
+  .join-card .jdesc { font-size: 0.82rem; color: var(--muted); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">دليل الاستعداد للامتحان · قواعد البيانات المتقدمة</div>
+  <h1>كل ما تحتاجه<br><span>في صفحة واحدة</span></h1>
+  <p class="hero-sub">من الاستفسارات الفرعية حتى المعاملات — مركّز، موضوع، وجاهز للامتحان</p>
+  <div class="badge-row">
+    <span class="badge hot">🔥 الأعلى احتمالاً: Joins</span>
+    <span class="badge hot">🔥 ACID Properties</span>
+    <span class="badge ok">✓ Triggers</span>
+    <span class="badge ok">✓ Sub-Queries</span>
+    <span class="badge">Views & Procedures</span>
+  </div>
+</div>
+
+<!-- ═══════════════ TOC ═══════════════ -->
+<div class="toc">
+  <h2>المحتويات</h2>
+  <ol>
+    <li><a href="#subqueries">الاستفسارات الفرعية (Sub-Queries)</a></li>
+    <li><a href="#joins">ربط الجداول (Joins)</a></li>
+    <li><a href="#triggers">المحفزات (Triggers)</a></li>
+    <li><a href="#views">طرق العرض (Views)</a></li>
+    <li><a href="#procedures">الإجراءات المخزنة (Stored Procedures)</a></li>
+    <li><a href="#transactions">المعاملات (Transactions) & ACID</a></li>
+    <li><a href="#forget">أشياء يُنساها الطلاب</a></li>
+    <li><a href="#traps">فخاخ الامتحان</a></li>
+    <li><a href="#questions">30 سؤالاً محتملاً مع الإجابات</a></li>
+    <li><a href="#revision">مراجعة الـ 30 دقيقة الأخيرة</a></li>
+    <li><a href="#cheat">الورقة الشاملة (Cheat Sheet)</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════ 1. SUB-QUERIES ═══════════════ -->
+<section id="subqueries">
+  <div class="section-label">الموضوع الأول</div>
+  <h2>الاستفسارات الفرعية</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف الدراسي</div>
+    استفسار SQL يُنفَّذ <strong>داخل استفسار رئيسي (Outer Query)</strong> لإعادة قيمة أو مجموعة بيانات تُستخدم في <code>SELECT / FROM / WHERE / HAVING</code>.
+  </div>
+
+  <h3>الحدس الذهني</h3>
+  <p>تخيّل خطوتين: أولاً قاعدة البيانات تجد قيمة معينة (مثل متوسط الراتب)، ثم تستخدم هذه القيمة لتصفية البيانات (من يتجاوز هذا المتوسط). الاستفسار الداخلي يُنجز الخطوة الأولى، والخارجي الخطوة الثانية.</p>
+
+  <h3>أنواع الاستفسارات الفرعية</h3>
+  <table>
+    <tr><th>النوع</th><th>ما يُعيده</th><th>المشغّل المناسب</th></tr>
+    <tr><td><strong>Scalar Subquery</strong></td><td>قيمة واحدة فقط</td><td><code>=, >, <, >=, <=</code></td></tr>
+    <tr><td><strong>Multiple Row Subquery</strong></td><td>قائمة من القيم</td><td><code>IN, NOT IN, EXISTS, NOT EXISTS</code></td></tr>
+    <tr><td><strong>Correlated Subquery</strong></td><td>يعتمد على الاستفسار الخارجي</td><td>يُنفَّذ لكل صف في الاستفسار الخارجي</td></tr>
+  </table>
+
+  <h4>مثال محلول — من يكسب أكثر من متوسط الرواتب؟</h4>
+  <pre><span class="kw">SELECT</span> <span class="tbl">EmpName</span>, <span class="tbl">Salary</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span>
+<span class="kw">WHERE</span>  <span class="tbl">Salary</span> &gt; (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="tbl">Salary</span>)
+    <span class="kw">FROM</span>   <span class="tbl">Employees</span>
+); <span class="cm">-- الاستفسار الداخلي يُعيد قيمة واحدة → Scalar</span></pre>
+
+  <div class="trap-box">
+    <div class="label">⚠️ خطأ شائع</div>
+    إذا استخدمت <code>=</code> مع استفسار فرعي يُعيد أكثر من صف، سيفشل الاستفسار. استخدم <code>IN</code> بدلاً من ذلك.
+  </div>
+</section>
+
+<!-- ═══════════════ 2. JOINS ═══════════════ -->
+<section id="joins">
+  <div class="section-label">الموضوع الثاني · 🔥 الأعلى أهمية</div>
+  <h2>ربط الجداول (Joins)</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف الدراسي</div>
+    عملية في SQL تسمح بدمج البيانات من جداول متعددة بناءً على علاقة بينها، لاسترجاع البيانات المرتبطة دون تكرار.
+  </div>
+
+  <h3>الضرب الديكارتي (Cartesian Product)</h3>
+  <p>إذا ربطت جدولين <strong>بدون شرط Join</strong>، يُطابق كل صف في الأول مع كل صف في الثاني.</p>
+  <div class="card gold">
+    <div class="card-title">📐 المعادلة</div>
+    جدول A يحوي <em>m</em> صفاً × جدول B يحوي <em>n</em> صفاً = <strong>m × n صفاً في النتيجة</strong>
+  </div>
+
+  <h3>أنواع الـ Joins</h3>
+  <div class="join-visual">
+    <div class="join-card">
+      <div class="jname">INNER JOIN</div>
+      <div class="jdesc">فقط الصفوف المتطابقة في كلا الجدولين</div>
+    </div>
+    <div class="join-card">
+      <div class="jname">LEFT JOIN</div>
+      <div class="jdesc">كل صفوف الجدول الأيسر + المتطابق من الأيمن (NULL إذا لا يوجد)</div>
+    </div>
+    <div class="join-card">
+      <div class="jname">RIGHT JOIN</div>
+      <div class="jdesc">كل صفوف الجدول الأيمن + المتطابق من الأيسر (NULL إذا لا يوجد)</div>
+    </div>
+    <div class="join-card">
+      <div class="jname">FULL OUTER JOIN</div>
+      <div class="jdesc">كل الصفوف من الجدولين بصرف النظر عن التطابق</div>
+    </div>
+  </div>
+
+  <div class="mnemonic">
+    <div class="label">🧠 طريقة تذكر</div>
+    <strong>تخيّل دائرتين متداخلتين:</strong><br>
+    INNER = فقط التقاطع | LEFT = الدائرة اليسرى كاملة | RIGHT = الدائرة اليمنى كاملة | FULL = الدائرتان معاً
+  </div>
+
+  <h4>مثال محلول — موظفون مع أقسامهم</h4>
+  <pre><span class="cm">-- INNER JOIN: فقط من لديه قسم</span>
+<span class="kw">SELECT</span> e.<span class="tbl">EmpName</span>, d.<span class="tbl">DeptName</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">Departments</span> d <span class="kw">ON</span> e.<span class="tbl">DeptID</span> = d.<span class="tbl">DeptID</span>;
+
+<span class="cm">-- LEFT JOIN: كل الموظفين، حتى من لا قسم لهم</span>
+<span class="kw">SELECT</span> e.<span class="tbl">EmpName</span>, d.<span class="tbl">DeptName</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span> e
+<span class="kw">LEFT JOIN</span> <span class="tbl">Departments</span> d <span class="kw">ON</span> e.<span class="tbl">DeptID</span> = d.<span class="tbl">DeptID</span>;</pre>
+
+  <h3>كلمات مفتاحية مهمة</h3>
+  <table>
+    <tr><th>الكلمة</th><th>الاستخدام</th></tr>
+    <tr><td><code>DISTINCT</code></td><td>إزالة التكرار من النتائج</td></tr>
+    <tr><td><code>TOP N</code></td><td>إعادة أول N صف فقط (أفيد لـ "أعلى 5" أو "الأحدث")</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════ 3. TRIGGERS ═══════════════ -->
+<section id="triggers">
+  <div class="section-label">الموضوع الثالث</div>
+  <h2>المحفزات (Triggers)</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف الدراسي</div>
+    كود SQL يُنفَّذ <strong>تلقائياً</strong> عند وقوع حدث محدد (INSERT / UPDATE / DELETE) على جدول.
+  </div>
+
+  <h3>المثلث ECA</h3>
+  <table>
+    <tr><th>الحرف</th><th>المعنى</th><th>مثال</th></tr>
+    <tr><td><strong>E</strong>vent</td><td>الحدث المُشغِّل</td><td>حذف سجل</td></tr>
+    <tr><td><strong>C</strong>ondition</td><td>شرط اختياري</td><td>فقط إذا كان الراتب > 10,000</td></tr>
+    <tr><td><strong>A</strong>ction</td><td>ما يُنفَّذ فعلاً</td><td>تسجيل الحدث في جدول سجلات</td></tr>
+  </table>
+
+  <h3>الجداول الخاصة بالـ Triggers</h3>
+  <div class="card purple">
+    <div class="card-title">جدولان مؤقتان</div>
+    <ul>
+      <li><strong>INSERTED</strong> — يحوي القيم الجديدة (INSERT أو UPDATE)</li>
+      <li><strong>DELETED</strong> — يحوي القيم القديمة (DELETE أو UPDATE)</li>
+    </ul>
+  </div>
+
+  <h3>نوعا الـ Trigger</h3>
+  <table>
+    <tr><th>النوع</th><th>متى يعمل</th><th>الاستخدام الرئيسي</th></tr>
+    <tr><td><strong>AFTER</strong></td><td>بعد نجاح العملية</td><td>التسجيل والمراجعة (Audit Trail)</td></tr>
+    <tr><td><strong>INSTEAD OF</strong></td><td>بدلاً من العملية</td><td>منع عمليات أو إعادة توجيهها</td></tr>
+  </table>
+
+  <h4>مثال محلول — سجل المحذوفات تلقائياً</h4>
+  <pre><span class="kw">CREATE TRIGGER</span> <span class="fn">trg_LogDelete</span>
+<span class="kw">ON</span> <span class="tbl">Employees</span>
+<span class="kw">AFTER DELETE</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">DeletedLog</span> (<span class="tbl">EmpID</span>, <span class="tbl">EmpName</span>, <span class="tbl">DeletedAt</span>)
+    <span class="kw">SELECT</span> <span class="tbl">EmpID</span>, <span class="tbl">EmpName</span>, <span class="fn">GETDATE</span>()
+    <span class="kw">FROM</span>  DELETED; <span class="cm">-- الجدول الخاص الذي يحوي الصفوف المحذوفة</span>
+<span class="kw">END</span>;</pre>
+
+  <div class="card gold">
+    <div class="card-title">💡 نقطة امتحانية مضمونة</div>
+    عندما يسألك الأستاذ عن <strong>Audit Trail</strong> (سجل التغييرات)، الجواب دائماً: <em>Triggers</em>.
+  </div>
+</section>
+
+<!-- ═══════════════ 4. VIEWS ═══════════════ -->
+<section id="views">
+  <div class="section-label">الموضوع الرابع</div>
+  <h2>طرق العرض (Views)</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف الدراسي</div>
+    <strong>جدول افتراضي (Virtual Table)</strong> مشتق من جداول أخرى. يمكن الاستعلام عنه كالجدول العادي لكنه لا يخزّن بيانات بذاته.
+  </div>
+
+  <p>تخيّل View كـ "نافذة" على البيانات — تُرى من خلالها لكنها لا تحتوي البيانات الفعلية. مفيد للأمان (إخفاء أعمدة حساسة كالراتب عن موظفي الاستقبال).</p>
+
+  <h4>إنشاء View</h4>
+  <pre><span class="kw">CREATE VIEW</span> <span class="fn">vw_EmployeeBasic</span> <span class="kw">AS</span>
+<span class="kw">SELECT</span> <span class="tbl">EmpName</span>, <span class="tbl">Department</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span>;
+<span class="cm">-- لم نُضمِّن عمود Salary → لا يراه من يستعلم عن الـ View</span></pre>
+
+  <h3>مشغّلات المجموعات (Set Operators)</h3>
+  <table>
+    <tr><th>المشغّل</th><th>ما يفعله</th></tr>
+    <tr><td><code>UNION</code></td><td>يجمع نتائج استفسارين مع <strong>إزالة التكرار</strong></td></tr>
+    <tr><td><code>INTERSECT</code></td><td>يُعيد فقط الصفوف الموجودة في <strong>كلا</strong> الاستفسارين</td></tr>
+    <tr><td><code>EXCEPT</code></td><td>يُعيد صفوف الاستفسار الأول <strong>غير الموجودة</strong> في الثاني</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════ 5. STORED PROCEDURES ═══════════════ -->
+<section id="procedures">
+  <div class="section-label">الموضوع الخامس</div>
+  <h2>الإجراءات المخزنة (Stored Procedures)</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف</div>
+    كتلة كود SQL مُسمَّاة ومحفوظة يمكن استدعاؤها مرات عديدة كأنها دالة برمجية.
+  </div>
+
+  <h3>المزايا الرئيسية</h3>
+  <ul>
+    <li><strong>الأداء:</strong> يتم تجميعها مسبقاً (Pre-compiled) فتعمل أسرع.</li>
+    <li><strong>الأمان:</strong> يمكن منح المستخدم صلاحية تنفيذ الإجراء دون الوصول للجداول.</li>
+  </ul>
+
+  <h3>أنواع المعاملات (Parameters)</h3>
+  <table>
+    <tr><th>النوع</th><th>الاتجاه</th><th>الكلمة المفتاحية</th></tr>
+    <tr><td>Input Parameter</td><td>من المستخدم → الإجراء</td><td><code>@param</code></td></tr>
+    <tr><td>Output Parameter</td><td>من الإجراء → المستخدم</td><td><code>@param OUTPUT</code></td></tr>
+  </table>
+
+  <h4>مثال محلول</h4>
+  <pre><span class="cm">-- إنشاء إجراء لإضافة طالب</span>
+<span class="kw">CREATE PROCEDURE</span> <span class="fn">sp_AddStudent</span>
+    @Name    <span class="fn">NVARCHAR</span>(<span class="num">100</span>),
+    @GPA     <span class="fn">DECIMAL</span>(<span class="num">3</span>,<span class="num">2</span>),
+    @NewID   <span class="fn">INT</span> <span class="kw">OUTPUT</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">Students</span> (<span class="tbl">Name</span>, <span class="tbl">GPA</span>) <span class="kw">VALUES</span> (@Name, @GPA);
+    <span class="kw">SET</span> @NewID = <span class="fn">SCOPE_IDENTITY</span>(); <span class="cm">-- إعادة الـ ID الجديد</span>
+<span class="kw">END</span>;
+
+<span class="cm">-- الاستدعاء</span>
+<span class="kw">DECLARE</span> @id <span class="fn">INT</span>;
+<span class="kw">EXEC</span> <span class="fn">sp_AddStudent</span> @Name=<span class="str">'Ahmad'</span>, @GPA=<span class="num">3.8</span>, @NewID=@id <span class="kw">OUTPUT</span>;
+<span class="kw">PRINT</span> @id;</pre>
+</section>
+
+<!-- ═══════════════ 6. TRANSACTIONS ═══════════════ -->
+<section id="transactions">
+  <div class="section-label">الموضوع السادس · 🔥 ACID مضمون في الامتحان</div>
+  <h2>المعاملات (Transactions)</h2>
+
+  <div class="card blue">
+    <div class="card-title">📌 التعريف</div>
+    مجموعة عمليات يجب أن تنجح أو تفشل <strong>معاً كوحدة واحدة</strong>.
+  </div>
+
+  <div class="mnemonic">
+    <div class="label">🧠 مثال بنكي لا يُنسى</div>
+    تحويل مبلغ من حساب A إلى B يتطلب خطوتين: <br>
+    خصم من A ← إضافة لـ B<br>
+    إذا تعطّل النظام بعد الخصم وقبل الإضافة — <strong>Transaction تتراجع عن كل شيء (Rollback)</strong>، لا يخسر A ولا يكسب B.
+  </div>
+
+  <h3>خصائص ACID — الأهم على الإطلاق</h3>
+  <table>
+    <tr><th>الحرف</th><th>الخاصية</th><th>المعنى البسيط</th><th>الكلمة المفتاحية</th></tr>
+    <tr>
+      <td><strong>A</strong></td>
+      <td>Atomicity</td>
+      <td>"الكل أو لا شيء" — إذا فشل جزء، يُلغى الكل</td>
+      <td>ROLLBACK</td>
+    </tr>
+    <tr>
+      <td><strong>C</strong></td>
+      <td>Consistency</td>
+      <td>قاعدة البيانات تنتقل من حالة صالحة إلى أخرى صالحة</td>
+      <td>Constraints</td>
+    </tr>
+    <tr>
+      <td><strong>I</strong></td>
+      <td>Isolation</td>
+      <td>المعاملات المتزامنة لا تتداخل مع بعضها</td>
+      <td>Concurrent</td>
+    </tr>
+    <tr>
+      <td><strong>D</strong></td>
+      <td>Durability</td>
+      <td>بعد الـ Commit، التغييرات دائمة حتى لو انقطع التيار</td>
+      <td>COMMIT</td>
+    </tr>
+  </table>
+
+  <div class="mnemonic">
+    <div class="label">🧠 طريقة حفظ ACID</div>
+    <strong>أ</strong>حمد (Atomicity) <strong>ك</strong>ان (Consistency) <strong>إ</strong>نسان (Isolation) <strong>د</strong>ائم (Durability)
+  </div>
+
+  <h3>أوامر التحكم</h3>
+  <table>
+    <tr><th>الأمر</th><th>الوظيفة</th></tr>
+    <tr><td><code>BEGIN TRANSACTION</code></td><td>بداية المعاملة</td></tr>
+    <tr><td><code>COMMIT</code></td><td>حفظ التغييرات نهائياً</td></tr>
+    <tr><td><code>ROLLBACK</code></td><td>التراجع عن كل التغييرات</td></tr>
+  </table>
+
+  <h4>مثال محلول — تحويل بنكي آمن</h4>
+  <pre><span class="kw">BEGIN TRANSACTION</span>;
+<span class="kw">BEGIN TRY</span>
+    <span class="kw">UPDATE</span> <span class="tbl">Accounts</span> <span class="kw">SET</span> Balance = Balance - <span class="num">500</span> <span class="kw">WHERE</span> AccID = <span class="num">1</span>;
+    <span class="kw">UPDATE</span> <span class="tbl">Accounts</span> <span class="kw">SET</span> Balance = Balance + <span class="num">500</span> <span class="kw">WHERE</span> AccID = <span class="num">2</span>;
+    <span class="kw">COMMIT</span>;         <span class="cm">-- نجح الاثنان → احفظ</span>
+<span class="kw">END TRY</span>
+<span class="kw">BEGIN CATCH</span>
+    <span class="kw">ROLLBACK</span>;       <span class="cm">-- فشل أي منهما → تراجع</span>
+<span class="kw">END CATCH</span>;</pre>
+</section>
+
+<!-- ═══════════════ PRIORITY ═══════════════ -->
+<section>
+  <div class="section-label">التقييم</div>
+  <h2>أهمية المواضيع في الامتحان</h2>
+  <div class="priority-bar"><span class="priority-label">Joins</span><div class="bar-track"><div class="bar-fill" style="width:98%;background:var(--accent2)"></div></div></div>
+  <div class="priority-bar"><span class="priority-label">Transactions & ACID</span><div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--accent2)"></div></div></div>
+  <div class="priority-bar"><span class="priority-label">Triggers</span><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div></div>
+  <div class="priority-bar"><span class="priority-label">Sub-Queries</span><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div></div>
+  <div class="priority-bar"><span class="priority-label">Stored Procedures</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--accent3)"></div></div></div>
+  <div class="priority-bar"><span class="priority-label">Views & Set Ops</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--accent3)"></div></div></div>
+</section>
+
+<!-- ═══════════════ FORGET ═══════════════ -->
+<section id="forget">
+  <div class="section-label">تحذير</div>
+  <h2>أشياء يُنساها الطلاب</h2>
+
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    الاستفسارات الفرعية يجب أن تكون داخل أقواس <code>()</code> دائماً.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    <code>Scalar Subquery</code> مع <code>=</code> يجب أن يُعيد قيمة <strong>واحدة فقط</strong> وإلا ينهار الاستفسار.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    في Triggers: <code>INSERTED</code> موجود حتى في UPDATE (يحوي القيم الجديدة)، و<code>DELETED</code> يحوي القيم القديمة.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    <code>UNION</code> يزيل التكرار تلقائياً. إذا أردت الإبقاء على التكرار استخدم <code>UNION ALL</code>.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    <code>View</code> لا تخزّن بيانات — إنها مجرد استفسار محفوظ. أي تغيير في الجداول الأصلية ينعكس فوراً.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    إذا نسيت <code>COMMIT</code> في Transaction، التغييرات غير محفوظة نهائياً في أنظمة كثيرة.
+  </div>
+  <div class="forget-box">
+    <div class="label">✓ لا تنسَ</div>
+    <strong>Correlated Subquery</strong> تُنفَّذ مرة لكل صف في الاستفسار الخارجي → بطيئة على البيانات الكبيرة.
+  </div>
+</section>
+
+<!-- ═══════════════ TRAPS ═══════════════ -->
+<section id="traps">
+  <div class="section-label">خطر</div>
+  <h2>فخاخ الامتحان</h2>
+
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ١</div>
+    <strong>Cartesian Product الخفي:</strong> إذا رأيت استفسار JOIN بدون شرط <code>ON</code> وسألك الأستاذ "لماذا النتيجة كبيرة جداً؟" — الجواب: Cartesian Product بسبب غياب شرط الربط.
+  </div>
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ٢</div>
+    <strong>AFTER vs INSTEAD OF:</strong> لا تخلط بينهما. AFTER يعمل <em>بعد</em> العملية، INSTEAD OF يعمل <em>بدلاً</em> منها.
+  </div>
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ٣</div>
+    <strong>NULL في LEFT JOIN:</strong> عندما لا يوجد تطابق في الجدول الأيمن، القيم تكون NULL وليس فارغة أو صفر.
+  </div>
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ٤</div>
+    <strong>ACID — Durability vs Consistency:</strong> Durability عن البقاء بعد الانهيار. Consistency عن قواعد قاعدة البيانات. لا تخلطهما.
+  </div>
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ٥</div>
+    <strong>EXCEPT vs NOT IN:</strong> كلاهما يستثني، لكن <code>EXCEPT</code> يعمل على مستوى المجموعات (Set Level) و<code>NOT IN</code> يعمل مع Subquery في WHERE.
+  </div>
+  <div class="trap-box">
+    <div class="label">⚠️ فخ ٦</div>
+    <strong>View ≠ Stored Procedure:</strong> View استفسار فقط (SELECT). Stored Procedure يمكن أن يحتوي INSERT/UPDATE/DELETE أيضاً.
+  </div>
+</section>
+
+<!-- ═══════════════ 30 QUESTIONS ═══════════════ -->
+<section id="questions">
+  <div class="section-label">التدريب</div>
+  <h2>30 سؤالاً محتملاً مع الإجابات</h2>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١</div>
+    <div class="q-text">ما الفرق بين AFTER Trigger و INSTEAD OF Trigger؟</div>
+    <div class="q-answer"><strong>AFTER:</strong> يُنفَّذ بعد نجاح العملية (مثال: تسجيل حدث الحذف في سجل). <strong>INSTEAD OF:</strong> يُنفَّذ بدلاً من العملية، أي يُلغيها ويستبدلها بمنطق مخصص (مثال: منع حذف مدير).</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢</div>
+    <div class="q-text">اذكر خصائص ACID وشرح كل منها.</div>
+    <div class="q-answer">
+      <strong>A</strong>tomicity: الكل أو لا شيء — إذا فشل أي جزء يتم ROLLBACK كامل.<br>
+      <strong>C</strong>onsistency: الانتقال بين حالتين صالحتين وفق القواعد المعرّفة.<br>
+      <strong>I</strong>solation: المعاملات المتزامنة لا تؤثر على بعضها.<br>
+      <strong>D</strong>urability: بعد COMMIT، التغييرات دائمة حتى مع انقطاع الكهرباء.
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٣</div>
+    <div class="q-text">ما الفرق بين INNER JOIN و LEFT JOIN؟</div>
+    <div class="q-answer">INNER JOIN يُعيد فقط الصفوف المتطابقة في كلا الجدولين. LEFT JOIN يُعيد كل صفوف الجدول الأيسر مع المتطابق من الأيمن، ويضع NULL حيثما لا يوجد تطابق.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٤</div>
+    <div class="q-text">ما هو Scalar Subquery ومتى يفشل؟</div>
+    <div class="q-answer">استفسار فرعي يُعيد قيمة واحدة فقط، يُستخدم مع مشغّلات المقارنة (=, >, <). يفشل إذا أعاد أكثر من صف واحد لأن المشغّل يتوقع قيمة مفردة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٥</div>
+    <div class="q-text">ما هو الـ Cartesian Product ومتى يحدث؟</div>
+    <div class="q-answer">يحدث عند ربط جدولين بدون شرط JOIN، فيُطابق كل صف في الأول مع كل صف في الثاني. إذا الجدول الأول فيه m صفاً والثاني n صفاً، النتيجة m×n صفاً.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٦</div>
+    <div class="q-text">ما الفرق بين UNION و UNION ALL؟</div>
+    <div class="q-answer">UNION يدمج النتائج ويُزيل التكرار. UNION ALL يدمج النتائج مع الإبقاء على كل الصفوف المكررة وهو أسرع أداءً.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٧</div>
+    <div class="q-text">ما الفائدة الأمنية للـ View؟</div>
+    <div class="q-answer">يمكن إنشاء View تُظهر فقط أعمدة محددة (مثلاً بدون عمود Salary)، ومنح المستخدم صلاحية على الـ View لا على الجدول الأصلي، مما يحمي البيانات الحساسة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٨</div>
+    <div class="q-text">ما الفرق بين Stored Procedure و View؟</div>
+    <div class="q-answer">View هي استفسار SELECT محفوظ يعمل كجدول افتراضي للقراءة. Stored Procedure كتلة كاملة من الكود يمكن أن تتضمن أي عملية (SELECT, INSERT, UPDATE, DELETE) وتقبل معاملات.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٩</div>
+    <div class="q-text">ما هي الجداول الخاصة في Triggers وما محتواها؟</div>
+    <div class="q-answer">INSERTED: يحوي الصفوف الجديدة أو المحدَّثة (القيم الجديدة). DELETED: يحوي الصفوف المحذوفة أو القيم القديمة قبل التحديث. كلاهما متاح فقط داخل الـ Trigger.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٠</div>
+    <div class="q-text">ما هو مثلث ECA في Triggers؟</div>
+    <div class="q-answer">E = Event (الحدث المُشغِّل مثل DELETE)، C = Condition (شرط اختياري)، A = Action (الكود المُنفَّذ). يجب أن يحتوي كل Trigger على Event وAction على الأقل.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١١</div>
+    <div class="q-text">متى تستخدم EXISTS بدلاً من IN في الاستفسارات الفرعية؟</div>
+    <div class="q-answer">EXISTS أسرع عند التعامل مع مجموعات بيانات كبيرة لأنه يتوقف عند أول تطابق. IN يُحمِّل كل القيم أولاً ثم يقارن. استخدم EXISTS مع الـ Correlated Subqueries.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٢</div>
+    <div class="q-text">اكتب استفساراً يُعيد الطلاب الذين درجاتهم أعلى من المتوسط.</div>
+    <div class="q-answer">
+      <pre style="margin:0"><span class="kw">SELECT</span> StudentName, Grade
+<span class="kw">FROM</span>   Students
+<span class="kw">WHERE</span>  Grade > (<span class="kw">SELECT</span> <span class="fn">AVG</span>(Grade) <span class="kw">FROM</span> Students);</pre>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٣</div>
+    <div class="q-text">ما الفرق بين INTERSECT و EXCEPT؟</div>
+    <div class="q-answer">INTERSECT يُعيد الصفوف المشتركة بين استفسارين. EXCEPT يُعيد الصفوف الموجودة في الاستفسار الأول غير الموجودة في الثاني.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٤</div>
+    <div class="q-text">لماذا الـ Stored Procedures أسرع من استفسارات SQL العادية؟</div>
+    <div class="q-answer">لأنها تُجمَّع (compiled) وتُحسَّن مسبقاً عند الإنشاء. في كل استدعاء لاحق، المحرك يُنفِّذ الخطة المُحسَّنة مباشرةً بدون إعادة تحليل.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٥</div>
+    <div class="q-text">ما هو الـ Audit Trail وكيف يُنفَّذ؟</div>
+    <div class="q-answer">سجل تاريخي لكل تغييرات قاعدة البيانات (من غيّر، ماذا غيّر، متى). يُنفَّذ باستخدام AFTER Triggers التي تُسجِّل كل INSERT أو UPDATE أو DELETE في جدول منفصل للمراجعة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٦</div>
+    <div class="q-text">ما الفرق بين COMMIT و ROLLBACK؟</div>
+    <div class="q-answer">COMMIT يحفظ جميع التغييرات نهائياً في قاعدة البيانات. ROLLBACK يتراجع عن كل التغييرات منذ بداية الـ Transaction ويعيد البيانات لحالتها السابقة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٧</div>
+    <div class="q-text">ما معنى Isolation في ACID وما الخطر إذا انعدمت؟</div>
+    <div class="q-answer">Isolation تعني أن المعاملات المتزامنة لا تتداخل. إذا انعدمت، قد تقرأ معاملة بيانات غير نهائية من معاملة أخرى (Dirty Read) أو تفقد تحديثات (Lost Update).</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٨</div>
+    <div class="q-text">اكتب Trigger يمنع حذف سجلات المديرين.</div>
+    <div class="q-answer">
+      <pre style="margin:0"><span class="kw">CREATE TRIGGER</span> <span class="fn">trg_PreventManagerDelete</span>
+<span class="kw">ON</span> <span class="tbl">Employees</span>
+<span class="kw">INSTEAD OF DELETE</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">IF EXISTS</span>(<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> DELETED <span class="kw">WHERE</span> Role=<span class="str">'Manager'</span>)
+        <span class="kw">RAISERROR</span>(<span class="str">'لا يمكن حذف مدير'</span>, <span class="num">16</span>, <span class="num">1</span>);
+    <span class="kw">ELSE</span>
+        <span class="kw">DELETE FROM</span> <span class="tbl">Employees</span>
+        <span class="kw">WHERE</span> EmpID <span class="kw">IN</span> (<span class="kw">SELECT</span> EmpID <span class="kw">FROM</span> DELETED);
+<span class="kw">END</span>;</pre>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ١٩</div>
+    <div class="q-text">ما الفرق بين Correlated Subquery والـ Subquery العادية؟</div>
+    <div class="q-answer">الـ Subquery العادية تُنفَّذ مرة واحدة وتُعيد نتيجتها. الـ Correlated Subquery تُنفَّذ مرة لكل صف في الاستفسار الخارجي لأنها تعتمد على قيم منه، مما يجعلها أبطأ.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٠</div>
+    <div class="q-text">ما فائدة DISTINCT في استفسارات الـ Join؟</div>
+    <div class="q-answer">عند الربط بين جداول، قد تظهر الصفوف مكررة إذا كان هناك أكثر من تطابق. DISTINCT يضمن إعادة كل قيمة فريدة مرة واحدة فقط في النتيجة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢١</div>
+    <div class="q-text">ما الخطوات لكتابة Stored Procedure بمعامل Output؟</div>
+    <div class="q-answer">
+      1. عرّف المعامل مع كلمة OUTPUT في رأس الإجراء.<br>
+      2. داخل الإجراء، عيّن قيمة للمعامل باستخدام SET أو SELECT.<br>
+      3. عند الاستدعاء، أعلن عن متغير محلي ومرره مع كلمة OUTPUT.
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٢</div>
+    <div class="q-text">ما الفرق بين FULL OUTER JOIN و INNER JOIN؟</div>
+    <div class="q-answer">INNER JOIN يُعيد فقط الصفوف المتطابقة في الجدولين. FULL OUTER JOIN يُعيد كل الصفوف من الجدولين، ويضع NULL في الأعمدة التي ليس لها تطابق.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٣</div>
+    <div class="q-text">هل يمكن تحديث بيانات View؟ متى؟</div>
+    <div class="q-answer">يمكن في حالات محدودة: إذا كانت الـ View مبنية على جدول واحد، وتضمنت المفتاح الأساسي، وغير متضمنة لـ GROUP BY أو DISTINCT أو تجميع. أي Update على الـ View يؤثر على الجدول الأصلي.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٤</div>
+    <div class="q-text">ما معنى Consistency في ACID وكيف تتحقق؟</div>
+    <div class="q-answer">تعني أن كل Transaction تنقل قاعدة البيانات من حالة صالحة إلى أخرى صالحة وفق القواعد المعرَّفة (Constraints, Keys, Rules). تتحقق عبر الـ Constraints المعرَّفة في الجداول والكود المبرمج.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٥</div>
+    <div class="q-text">اكتب استفساراً يجد الموظفين الذين ينتمون لنفس الأقسام التي ينتمي لها موظفو قسم "IT".</div>
+    <div class="q-answer">
+      <pre style="margin:0"><span class="kw">SELECT DISTINCT</span> EmpName
+<span class="kw">FROM</span>   Employees
+<span class="kw">WHERE</span>  DeptID <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> DeptID
+    <span class="kw">FROM</span>   Employees
+    <span class="kw">WHERE</span>  DeptName = <span class="str">'IT'</span>
+);</pre>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٦</div>
+    <div class="q-text">ما الفرق بين مزايا View من حيث الأداء والأمان؟</div>
+    <div class="q-answer">الأمان: تُخفي الأعمدة الحساسة وتقيّد وصول المستخدمين. الأداء: لا تحسين أداء فعلي (إلا في Indexed Views)؛ تُبسِّط كتابة الاستفسارات المعقدة وتُحسِّن قابلية الصيانة.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٧</div>
+    <div class="q-text">صمِّم Trigger لمراقبة تغييرات الراتب وتسجيلها.</div>
+    <div class="q-answer">
+      <pre style="margin:0"><span class="kw">CREATE TRIGGER</span> <span class="fn">trg_AuditSalary</span>
+<span class="kw">ON</span> <span class="tbl">Employees</span>
+<span class="kw">AFTER UPDATE</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">IF UPDATE</span>(Salary)
+        <span class="kw">INSERT INTO</span> <span class="tbl">SalaryLog</span>(EmpID, OldSalary, NewSalary, ChangedAt)
+        <span class="kw">SELECT</span> d.EmpID, d.Salary, i.Salary, <span class="fn">GETDATE</span>()
+        <span class="kw">FROM</span>   DELETED d <span class="kw">JOIN</span> INSERTED i <span class="kw">ON</span> d.EmpID = i.EmpID;
+<span class="kw">END</span>;</pre>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٨</div>
+    <div class="q-text">أي خاصية ACID تضمن بقاء البيانات بعد انقطاع الكهرباء؟</div>
+    <div class="q-answer">Durability — تضمن أن أي Transaction تم COMMIT لها، تظل تغييراتها محفوظة دائماً حتى لو تعطّل النظام بعد ذلك مباشرةً.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٢٩</div>
+    <div class="q-text">ما هو TOP N واذكر مثالاً على استخدامه؟</div>
+    <div class="q-answer">
+      كلمة مفتاحية تُعيد أول N صف من النتيجة. مفيدة لـ "أعلى 5 موظفين راتباً":
+      <pre style="margin:0"><span class="kw">SELECT TOP</span> <span class="num">5</span> EmpName, Salary
+<span class="kw">FROM</span>   Employees
+<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>;</pre>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">سؤال ٣٠</div>
+    <div class="q-text">متى تستخدم INSTEAD OF Trigger على View؟</div>
+    <div class="q-answer">Views المبنية على أكثر من جدول لا يمكن تحديثها مباشرةً. نستخدم INSTEAD OF Trigger على الـ View لنحدد كيف يُترجَم الـ INSERT/UPDATE/DELETE إلى تغييرات على الجداول الأصلية.</div>
+  </div>
+</section>
+
+<!-- ═══════════════ LAST 30 MIN ═══════════════ -->
+<section id="revision">
+  <div class="section-label">قبل الامتحان بنصف ساعة</div>
+  <div class="revision-box">
+    <h2 style="color:var(--accent3);border-bottom-color:var(--accent3)">مراجعة الـ 30 دقيقة الأخيرة</h2>
+    <ul style="margin-top:1rem">
+      <li>✅ <strong>ACID</strong> = Atomicity · Consistency · Isolation · Durability</li>
+      <li>✅ <strong>COMMIT</strong> = حفظ نهائي | <strong>ROLLBACK</strong> = تراجع كامل</li>
+      <li>✅ <strong>INNER JOIN</strong> = التقاطع فقط | <strong>LEFT JOIN</strong> = الجدول الأيسر كله</li>
+      <li>✅ <strong>AFTER Trigger</strong> = للتسجيل | <strong>INSTEAD OF</strong> = للمنع أو التعديل</li>
+      <li>✅ <strong>INSERTED / DELETED</strong> = جدولان خاصان داخل الـ Trigger فقط</li>
+      <li>✅ <strong>Scalar Subquery</strong> = قيمة واحدة مع = | <strong>Multiple Row</strong> = قائمة مع IN</li>
+      <li>✅ <strong>UNION</strong> = بلا تكرار | <strong>UNION ALL</strong> = مع التكرار</li>
+      <li>✅ <strong>Correlated Subquery</strong> = تُنفَّذ لكل صف في الاستفسار الخارجي</li>
+      <li>✅ <strong>View</strong> = جدول افتراضي (لا يخزن بيانات)</li>
+      <li>✅ <strong>Stored Procedure</strong> = كتلة كود محفوظة، أسرع، أكثر أمناً</li>
+      <li>✅ <strong>Cartesian Product</strong> = JOIN بدون شرط ON</li>
+      <li>✅ <strong>ECA</strong> = Event · Condition · Action (مثلث الـ Trigger)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════ CHEAT SHEET ═══════════════ -->
+<section id="cheat">
+  <div class="section-label">الملخص النهائي</div>
+  <div class="cheat-sheet">
+    <h2>الورقة الشاملة — نظرة واحدة تكفي</h2>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <h4>📦 Sub-Queries</h4>
+        <ul>
+          <li>داخل أقواس <code>()</code> دائماً</li>
+          <li>Scalar → قيمة واحدة → يعمل مع =</li>
+          <li>Multiple Row → IN / EXISTS</li>
+          <li>Correlated → مرة لكل صف خارجي</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <h4>🔗 Joins</h4>
+        <ul>
+          <li>INNER = التقاطع</li>
+          <li>LEFT = الجدول الأيسر كله</li>
+          <li>RIGHT = الجدول الأيمن كله</li>
+          <li>FULL = الكل مع NULL</li>
+          <li>بدون ON = Cartesian Product</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <h4>⚡ Triggers</h4>
+        <ul>
+          <li>ECA: Event · Condition · Action</li>
+          <li>AFTER → تسجيل / مراجعة</li>
+          <li>INSTEAD OF → منع / تعديل</li>
+          <li>INSERTED → قيم جديدة</li>
+          <li>DELETED → قيم قديمة</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <h4>🪟 Views</h4>
+        <ul>
+          <li>جدول افتراضي (لا يخزن)</li>
+          <li>للأمان وتبسيط الاستفسارات</li>
+          <li>UNION = بلا تكرار</li>
+          <li>INTERSECT = مشترك</li>
+          <li>EXCEPT = الأول ناقص الثاني</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <h4>🛠️ Stored Procedures</h4>
+        <ul>
+          <li>أسرع (Pre-compiled)</li>
+          <li>@param = Input</li>
+          <li>@param OUTPUT = Output</li>
+          <li>أمان: صلاحية بدون وصول للجداول</li>
+        </ul>
+      </div>
+      <div class="cheat-item">
+        <h4>💳 Transactions & ACID</h4>
+        <ul>
+          <li>Atomicity = الكل أو لا شيء</li>
+          <li>Consistency = حالة صالحة دائماً</li>
+          <li>Isolation = لا تداخل</li>
+          <li>Durability = دائم بعد COMMIT</li>
+          <li>COMMIT = حفظ | ROLLBACK = تراجع</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  دليل مراجعة · قواعد البيانات المتقدمة · جميع الحقوق محفوظة للمراجعة الشخصية
+</footer>
+
+</body>
+</html>
