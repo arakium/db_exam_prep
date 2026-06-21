@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استراتيجية حل مسائل SQL</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #2d3748;
+    --accent: #58a6ff;
+    --accent2: #f78166;
+    --accent3: #3fb950;
+    --accent4: #d2a8ff;
+    --gold: #e3b341;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --danger: #f85149;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    line-height: 1.9;
+    padding: 0 1rem 5rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 3rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 900; line-height: 1.2; color: #fff; }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub { color: var(--muted); margin-top: 0.75rem; font-size: 0.95rem; }
+
+  /* ── TOC ── */
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2.5rem; }
+  .toc h2 { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; letter-spacing: 0.1em; }
+  .toc ol { padding-right: 1.25rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── SECTION ── */
+  section { margin-bottom: 3.5rem; }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; margin-bottom: 0.4rem; }
+  h2 { font-size: 1.5rem; font-weight: 700; color: #fff; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); margin-bottom: 1.25rem; display: inline-block; }
+  h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent4); margin: 1.5rem 0 0.6rem; }
+  h4 { font-size: 0.95rem; font-weight: 600; color: var(--gold); margin: 1rem 0 0.4rem; }
+  p { margin-bottom: 0.75rem; color: #cdd9e5; }
+  ul, ol { padding-right: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.35rem; color: #cdd9e5; }
+  strong { color: #fff; font-weight: 700; }
+  em { color: var(--gold); font-style: normal; }
+
+  /* ── CODE ── */
+  pre, code { font-family: 'IBM Plex Mono', monospace; direction: ltr; text-align: left; }
+  pre {
+    background: #080d14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    margin: 0.75rem 0 1rem;
+  }
+  code { background: #1c2330; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.85rem; color: var(--accent4); }
+  .kw  { color: #ff7b72; font-weight: 500; }
+  .fn  { color: #79c0ff; }
+  .str { color: #a5d6ff; }
+  .cm  { color: #8b949e; font-style: italic; }
+  .num { color: #f2cc60; }
+  .tbl { color: #7ee787; }
+  .ord { color: var(--accent2); font-weight: 700; }
+
+  /* ── CARDS ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin: 0.75rem 0; }
+  .card.blue   { border-right: 3px solid var(--accent); }
+  .card.red    { border-right: 3px solid var(--danger); }
+  .card.green  { border-right: 3px solid var(--accent3); }
+  .card.gold   { border-right: 3px solid var(--gold); }
+  .card.purple { border-right: 3px solid var(--accent4); }
+  .card-title  { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .card.blue   .card-title { color: var(--accent); }
+  .card.red    .card-title { color: var(--danger); }
+  .card.green  .card-title { color: var(--accent3); }
+  .card.gold   .card-title { color: var(--gold); }
+  .card.purple .card-title { color: var(--accent4); }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 1rem; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); padding: 0.55rem 0.85rem; text-align: right; border: 1px solid var(--border); font-weight: 700; }
+  td { padding: 0.5rem 0.85rem; border: 1px solid var(--border); color: #cdd9e5; vertical-align: top; }
+  tr:nth-child(even) td { background: #0f1520; }
+
+  /* ── EXECUTION ORDER TIMELINE ── */
+  .exec-timeline { position: relative; padding: 0; margin: 1.5rem 0; }
+  .exec-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+  .exec-step::before {
+    content: '';
+    position: absolute;
+    right: 22px;
+    top: 44px;
+    width: 2px;
+    height: calc(100% - 8px);
+    background: var(--border);
+  }
+  .exec-step:last-child::before { display: none; }
+  .step-num {
+    min-width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .step-body { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem 1rem; }
+  .step-kw { font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; font-weight: 600; color: #ff7b72; }
+  .step-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.15rem; }
+  .step-hint { font-size: 0.8rem; color: var(--accent3); margin-top: 0.2rem; }
+
+  /* ── EXECUTION COLORS ── */
+  .s1  { background: #1a0f1f; border: 1px solid #7c3aed; color: var(--accent4); }
+  .s2  { background: #0f1a20; border: 1px solid #0ea5e9; color: #38bdf8; }
+  .s3  { background: #0f1a0f; border: 1px solid #16a34a; color: var(--accent3); }
+  .s4  { background: #1a1a0f; border: 1px solid #ca8a04; color: var(--gold); }
+  .s5  { background: #1a0f10; border: 1px solid #dc2626; color: #f87171; }
+  .s6  { background: #101a1a; border: 1px solid #0891b2; color: #22d3ee; }
+  .s7  { background: #1a100f; border: 1px solid #ea580c; color: #fb923c; }
+  .s8  { background: #101520; border: 1px solid #3b82f6; color: #93c5fd; }
+  .s9  { background: #1a1020; border: 1px solid #9333ea; color: #c084fc; }
+
+  /* ── ARABIC TO SQL FLOW ── */
+  .translation-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; margin: 1rem 0; }
+  .tf-arabic { background: var(--surface); border: 1px solid var(--gold); border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.95rem; color: #e6edf3; }
+  .tf-arrow { color: var(--accent); font-size: 1.5rem; text-align: center; }
+  .tf-sql { background: #080d14; border: 1px solid var(--accent); border-radius: 8px; padding: 0.85rem 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; direction: ltr; text-align: left; color: var(--accent3); }
+  .tf-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+
+  /* ── KEYWORD MAP ── */
+  .keyword-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.6rem; margin: 0.75rem 0; }
+  .kmap-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 0.85rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .kmap-ar { color: #cdd9e5; font-size: 0.9rem; }
+  .kmap-sql { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; color: #ff7b72; background: #1c1010; padding: 0.15rem 0.45rem; border-radius: 4px; }
+
+  /* ── STEP-BY-STEP SOLVER ── */
+  .solver-step { display: flex; gap: 1rem; margin-bottom: 1rem; }
+  .solver-num { min-width: 28px; height: 28px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: #000; flex-shrink: 0; margin-top: 0.15rem; }
+  .solver-body { flex: 1; }
+  .solver-title { font-weight: 700; color: #fff; font-size: 0.95rem; }
+  .solver-detail { color: var(--muted); font-size: 0.88rem; margin-top: 0.15rem; }
+
+  /* ── BOXES ── */
+  .warn-box { background: #1a1000; border: 1px solid var(--gold); border-radius: 8px; padding: 0.85rem 1.1rem; margin: 0.7rem 0; }
+  .warn-box .label { color: var(--gold); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .tip-box { background: #0f1a10; border: 1px solid var(--accent3); border-radius: 8px; padding: 0.85rem 1.1rem; margin: 0.7rem 0; }
+  .tip-box .label { color: var(--accent3); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .danger-box { background: #1a0e0e; border: 1px solid var(--danger); border-radius: 8px; padding: 0.85rem 1.1rem; margin: 0.7rem 0; }
+  .danger-box .label { color: var(--danger); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+
+  /* ── PRACTICAL EXAMPLE ── */
+  .example-problem {
+    background: #0a1020;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+  }
+  .example-problem .problem-label { font-size: 0.72rem; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .example-problem .problem-text { font-size: 1.05rem; color: #fff; font-weight: 700; line-height: 1.6; }
+
+  .solution-steps { margin: 1rem 0; }
+  .sol-step { background: var(--surface); border-right: 3px solid var(--accent4); border-radius: 6px; padding: 0.7rem 1rem; margin-bottom: 0.5rem; }
+  .sol-step-num { font-size: 0.72rem; color: var(--accent4); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+  .sol-step-text { color: #cdd9e5; font-size: 0.9rem; }
+
+  .annotated-pre { position: relative; }
+  .annotated-pre .ann { position: relative; }
+  .line-ann { display: inline-block; }
+
+  /* ── COMPARE TABLE ── */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.75rem 0; }
+  .compare-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+  .compare-card h4 { margin-top: 0; }
+
+  /* ── CHEAT BOTTOM ── */
+  .final-cheat { background: #08111a; border: 2px solid var(--accent); border-radius: 10px; padding: 1.5rem; }
+  .cheat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .cheat-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+  .cheat-item h4 { margin-top: 0; font-size: 0.88rem; }
+  .cheat-item ul { font-size: 0.85rem; }
+
+  footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.78rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">دليل الاستراتيجية · قواعد البيانات المتقدمة</div>
+  <h1>كيف تحل مسائل<br><span>SQL من الصفر</span></h1>
+  <p class="hero-sub">ترتيب التنفيذ الحقيقي · تحويل العربي لـ SQL · خطوات عملية مضمونة في أي مسألة</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>المحتويات</h2>
+  <ol>
+    <li><a href="#execution">ترتيب تنفيذ SQL — ما يحدث فعلاً داخل قاعدة البيانات</a></li>
+    <li><a href="#arabic-map">خريطة الكلمات العربية → SQL</a></li>
+    <li><a href="#strategy">الاستراتيجية العامة لحل أي مسألة (5 خطوات)</a></li>
+    <li><a href="#patterns">الأنماط الشائعة وكيف تتعرف عليها</a></li>
+    <li><a href="#practical">مثال عملي متكامل — من النص العربي للكود</a></li>
+    <li><a href="#mistakes">أخطاء الترتيب الأكثر شيوعاً</a></li>
+    <li><a href="#cheat">ورقة المرجع السريع</a></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 1: EXECUTION ORDER -->
+<!-- ══════════════════════════════════════════ -->
+<section id="execution">
+  <div class="section-label">الأهم على الإطلاق</div>
+  <h2>ترتيب تنفيذ SQL</h2>
+
+  <p>
+    أنت تكتب SQL بترتيب معين، لكن قاعدة البيانات تُنفِّذها بترتيب <strong>مختلف تماماً</strong>.
+    هذا هو السبب الرئيسي للأخطاء. افهم الترتيب الحقيقي وستحل 80% من مشاكلك.
+  </p>
+
+  <div class="card gold">
+    <div class="card-title">🔑 القاعدة الذهبية</div>
+    الترتيب الذي <strong>تكتبه</strong>: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY<br>
+    الترتيب الذي <strong>ينفّذه</strong> المحرك: عكسه تقريباً — FROM أولاً، SELECT قريباً من الآخر
+  </div>
+
+  <h3>ترتيب التنفيذ الفعلي — خطوة بخطوة</h3>
+
+  <div class="exec-timeline">
+
+    <div class="exec-step">
+      <div class="step-num s1">١</div>
+      <div class="step-body">
+        <div class="step-kw">FROM / JOIN</div>
+        <div class="step-desc">أول شيء يُنفَّذ. قاعدة البيانات تجلب الجداول وتدمجها. إذا كان هناك JOIN، يُطبَّق هنا ويُنشأ جدول مؤقت كبير.</div>
+        <div class="step-hint">💡 لهذا يجب كتابة شرط ON مع كل JOIN — وإلا تحصل على Cartesian Product</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s2">٢</div>
+      <div class="step-body">
+        <div class="step-kw">ON (شرط الـ JOIN)</div>
+        <div class="step-desc">يُطبَّق مباشرة بعد JOIN لتصفية الصفوف المدمجة. مختلف عن WHERE — يعمل على مستوى الدمج.</div>
+        <div class="step-hint">💡 LEFT JOIN مع ON يبقي كل صفوف الجدول الأيسر حتى لو فشل الشرط</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s3">٣</div>
+      <div class="step-body">
+        <div class="step-kw">WHERE</div>
+        <div class="step-desc">يصفّي الصفوف من الجدول المدمج. لا يمكن استخدام Alias من SELECT هنا لأن SELECT لم يُنفَّذ بعد. لا يمكن استخدام دوال التجميع (SUM, AVG) هنا.</div>
+        <div class="step-hint">⚠️ لا تضع شرط تجميع (SUM > 1000) في WHERE — ضعه في HAVING</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s4">٤</div>
+      <div class="step-body">
+        <div class="step-kw">GROUP BY</div>
+        <div class="step-desc">يجمع الصفوف المتشابهة في مجموعات. بعد هذه الخطوة، كل "صف" في النتيجة يمثل مجموعة كاملة.</div>
+        <div class="step-hint">💡 كل عمود في SELECT يجب أن يكون إما في GROUP BY أو داخل دالة تجميع</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s5">٥</div>
+      <div class="step-body">
+        <div class="step-kw">HAVING</div>
+        <div class="step-desc">يصفّي المجموعات (لا الصفوف). هنا يمكنك استخدام دوال التجميع مثل HAVING COUNT(*) > 5.</div>
+        <div class="step-hint">💡 HAVING = WHERE ولكن للمجموعات بعد GROUP BY</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s6">٦</div>
+      <div class="step-body">
+        <div class="step-kw">SELECT</div>
+        <div class="step-desc">الآن فقط تُحدَّد الأعمدة المطلوبة. الـ Alias تُنشأ هنا — ولهذا لا يمكن استخدامها في WHERE أو HAVING.</div>
+        <div class="step-hint">💡 DISTINCT يُطبَّق هنا أيضاً لإزالة التكرار</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s7">٧</div>
+      <div class="step-body">
+        <div class="step-kw">ORDER BY</div>
+        <div class="step-desc">يرتب النتيجة النهائية. الوحيد الذي يستطيع استخدام Alias من SELECT لأنه يأتي بعده.</div>
+        <div class="step-hint">💡 ASC = تصاعدي (الافتراضي) | DESC = تنازلي</div>
+      </div>
+    </div>
+
+    <div class="exec-step">
+      <div class="step-num s8">٨</div>
+      <div class="step-body">
+        <div class="step-kw">TOP / LIMIT / OFFSET</div>
+        <div class="step-desc">آخر شيء يُطبَّق — يقطع النتيجة المرتبة ويأخذ العدد المطلوب.</div>
+        <div class="step-hint">💡 دائماً استخدمه مع ORDER BY وإلا النتيجة غير محددة</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">📌 ملخص الترتيب في سطر واحد</div>
+    <p style="font-family:'IBM Plex Mono',monospace;direction:ltr;text-align:left;font-size:0.85rem;color:#fff;margin:0">
+      FROM → ON → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → TOP
+    </p>
+  </div>
+
+  <h3>لماذا يهمك هذا عملياً؟</h3>
+  <table>
+    <tr><th>الموقف</th><th>السبب من ترتيب التنفيذ</th></tr>
+    <tr><td>لا تستطيع كتابة <code>WHERE TotalSalary > 5000</code> حيث TotalSalary هو Alias</td><td>WHERE يُنفَّذ قبل SELECT — الـ Alias غير موجود بعد</td></tr>
+    <tr><td>لا تستطيع <code>WHERE SUM(Salary) > 5000</code></td><td>WHERE يُنفَّذ قبل GROUP BY — لا مجموعات بعد</td></tr>
+    <tr><td>يمكن <code>ORDER BY TotalSalary</code> بالـ Alias</td><td>ORDER BY يأتي بعد SELECT — الـ Alias موجود الآن</td></tr>
+    <tr><td>JOIN بدون ON يعطي ملايين الصفوف</td><td>FROM يدمج الجداول أولاً — بدون شرط = Cartesian Product</td></tr>
+  </table>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 2: ARABIC TO SQL MAP -->
+<!-- ══════════════════════════════════════════ -->
+<section id="arabic-map">
+  <div class="section-label">المهارة الأساسية</div>
+  <h2>خريطة العربي → SQL</h2>
+
+  <p>عندما ترى نصاً عربياً، ابحث عن الكلمات المفتاحية التالية وترجمها مباشرة:</p>
+
+  <h3>كلمات الاختيار والفلترة</h3>
+  <div class="keyword-map">
+    <div class="kmap-item"><span class="kmap-ar">أظهر / اعرض / استرجع</span><span class="kmap-sql">SELECT</span></div>
+    <div class="kmap-item"><span class="kmap-ar">من جدول / من قاعدة</span><span class="kmap-sql">FROM</span></div>
+    <div class="kmap-item"><span class="kmap-ar">حيث / الذي / التي</span><span class="kmap-sql">WHERE</span></div>
+    <div class="kmap-item"><span class="kmap-ar">يساوي / يكون</span><span class="kmap-sql">=</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أكبر من</span><span class="kmap-sql">&gt;</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أصغر من</span><span class="kmap-sql">&lt;</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أكبر من أو يساوي</span><span class="kmap-sql">&gt;=</span></div>
+    <div class="kmap-item"><span class="kmap-ar">لا يساوي / غير</span><span class="kmap-sql">!=  أو  &lt;&gt;</span></div>
+    <div class="kmap-item"><span class="kmap-ar">وأيضاً / و</span><span class="kmap-sql">AND</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أو</span><span class="kmap-sql">OR</span></div>
+    <div class="kmap-item"><span class="kmap-ar">ليس / لا</span><span class="kmap-sql">NOT</span></div>
+    <div class="kmap-item"><span class="kmap-ar">يحتوي على / يبدأ بـ</span><span class="kmap-sql">LIKE '%...%'</span></div>
+    <div class="kmap-item"><span class="kmap-ar">ضمن القائمة / أحد</span><span class="kmap-sql">IN (...)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">بين ... و ...</span><span class="kmap-sql">BETWEEN x AND y</span></div>
+    <div class="kmap-item"><span class="kmap-ar">غير موجود / لا يوجد</span><span class="kmap-sql">NOT EXISTS</span></div>
+    <div class="kmap-item"><span class="kmap-ar">فارغ / لم يُحدَّد</span><span class="kmap-sql">IS NULL</span></div>
+  </div>
+
+  <h3>كلمات التجميع والحساب</h3>
+  <div class="keyword-map">
+    <div class="kmap-item"><span class="kmap-ar">عدد / كم عدد</span><span class="kmap-sql">COUNT(*)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">مجموع / إجمالي</span><span class="kmap-sql">SUM(...)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">متوسط / المعدل</span><span class="kmap-sql">AVG(...)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أعلى / أكبر قيمة</span><span class="kmap-sql">MAX(...)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أدنى / أصغر قيمة</span><span class="kmap-sql">MIN(...)</span></div>
+    <div class="kmap-item"><span class="kmap-ar">لكل / بحسب / مقسّم على</span><span class="kmap-sql">GROUP BY</span></div>
+    <div class="kmap-item"><span class="kmap-ar">الذي مجموعه / يزيد عدده</span><span class="kmap-sql">HAVING</span></div>
+    <div class="kmap-item"><span class="kmap-ar">بدون تكرار / فريد</span><span class="kmap-sql">DISTINCT</span></div>
+  </div>
+
+  <h3>كلمات الترتيب والتحديد</h3>
+  <div class="keyword-map">
+    <div class="kmap-item"><span class="kmap-ar">مرتّباً / مرتبة</span><span class="kmap-sql">ORDER BY</span></div>
+    <div class="kmap-item"><span class="kmap-ar">تصاعدياً / من الأقل</span><span class="kmap-sql">ASC</span></div>
+    <div class="kmap-item"><span class="kmap-ar">تنازلياً / من الأعلى</span><span class="kmap-sql">DESC</span></div>
+    <div class="kmap-item"><span class="kmap-ar">أول N / أعلى N</span><span class="kmap-sql">TOP N</span></div>
+    <div class="kmap-item"><span class="kmap-ar">ربط / دمج جدولين</span><span class="kmap-sql">JOIN ... ON</span></div>
+    <div class="kmap-item"><span class="kmap-ar">حتى لو لا يوجد / كل السجلات</span><span class="kmap-sql">LEFT JOIN</span></div>
+  </div>
+
+  <h3>أمثلة ترجمة مباشرة</h3>
+
+  <div class="translation-flow">
+    <div>
+      <div class="tf-label">النص العربي</div>
+      <div class="tf-arabic">"أظهر أسماء الموظفين الذين راتبهم أكبر من 5000"</div>
+    </div>
+    <div class="tf-arrow">→</div>
+    <div>
+      <div class="tf-label">SQL</div>
+      <div class="tf-sql">SELECT EmpName<br>FROM Employees<br>WHERE Salary > 5000;</div>
+    </div>
+  </div>
+
+  <div class="translation-flow">
+    <div>
+      <div class="tf-label">النص العربي</div>
+      <div class="tf-arabic">"اعرض عدد الموظفين لكل قسم مرتّباً تنازلياً"</div>
+    </div>
+    <div class="tf-arrow">→</div>
+    <div>
+      <div class="tf-label">SQL</div>
+      <div class="tf-sql">SELECT DeptName, COUNT(*) AS Total<br>FROM Employees<br>GROUP BY DeptName<br>ORDER BY Total DESC;</div>
+    </div>
+  </div>
+
+  <div class="translation-flow">
+    <div>
+      <div class="tf-label">النص العربي</div>
+      <div class="tf-arabic">"أظهر الأقسام التي يزيد عدد موظفيها عن 10"</div>
+    </div>
+    <div class="tf-arrow">→</div>
+    <div>
+      <div class="tf-label">SQL</div>
+      <div class="tf-sql">SELECT DeptName<br>FROM Employees<br>GROUP BY DeptName<br>HAVING COUNT(*) > 10;</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 3: STRATEGY -->
+<!-- ══════════════════════════════════════════ -->
+<section id="strategy">
+  <div class="section-label">المنهج</div>
+  <h2>الاستراتيجية العامة — 5 خطوات</h2>
+
+  <p>استخدم هذه الخطوات مع أي مسألة SQL حتى لو لم تفهمها كاملاً في البداية:</p>
+
+  <div class="solver-step">
+    <div class="solver-num">١</div>
+    <div class="solver-body">
+      <div class="solver-title">حدّد المطلوب — ماذا تُعيد؟</div>
+      <div class="solver-detail">ابحث عن "أظهر / استرجع / اعرض / احسب" — هذا يحدد محتوى SELECT وهدف الاستفسار</div>
+    </div>
+  </div>
+
+  <div class="solver-step">
+    <div class="solver-num">٢</div>
+    <div class="solver-body">
+      <div class="solver-title">حدّد الجداول — من أين؟</div>
+      <div class="solver-detail">كل الكيانات المذكورة (موظف، قسم، طالب، مادة) = جداول في FROM. إذا كانت جدولين أو أكثر تحتاج JOIN</div>
+    </div>
+  </div>
+
+  <div class="solver-step">
+    <div class="solver-num">٣</div>
+    <div class="solver-body">
+      <div class="solver-title">حدّد الشروط — أي قيد؟</div>
+      <div class="solver-detail">
+        "حيث / الذي / الذين" = WHERE (على صفوف فردية)<br>
+        "الذي مجموعه / يزيد عدده" = HAVING (على مجموعات بعد GROUP BY)
+      </div>
+    </div>
+  </div>
+
+  <div class="solver-step">
+    <div class="solver-num">٤</div>
+    <div class="solver-body">
+      <div class="solver-title">حدّد التجميع — هل تحتاج GROUP BY؟</div>
+      <div class="solver-detail">إذا رأيت "لكل قسم / لكل طالب / بحسب" → GROUP BY. إذا رأيت دوال تجميع (COUNT, SUM, AVG) → غالباً تحتاج GROUP BY أيضاً</div>
+    </div>
+  </div>
+
+  <div class="solver-step">
+    <div class="solver-num">٥</div>
+    <div class="solver-body">
+      <div class="solver-title">حدّد الترتيب والتحديد</div>
+      <div class="solver-detail">
+        "مرتّباً / من الأعلى" → ORDER BY ... DESC<br>
+        "أعلى 5 / أول 3" → TOP N مع ORDER BY
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">💡 ترتيب الكتابة الموصى به</div>
+    اكتب الاستفسار بهذا الترتيب حتى لا تنسى شيئاً:<br><br>
+    <strong>١) FROM</strong> (من أي جداول؟) ←
+    <strong>٢) JOIN</strong> (هل تربط جداول؟) ←
+    <strong>٣) WHERE</strong> (شروط الصفوف) ←
+    <strong>٤) GROUP BY</strong> (تجميع؟) ←
+    <strong>٥) HAVING</strong> (شروط المجموعات) ←
+    <strong>٦) SELECT</strong> (ماذا تُظهر؟) ←
+    <strong>٧) ORDER BY</strong> (ترتيب؟)
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 4: PATTERNS -->
+<!-- ══════════════════════════════════════════ -->
+<section id="patterns">
+  <div class="section-label">التعرف السريع</div>
+  <h2>أنماط المسائل الشائعة</h2>
+
+  <h3>النمط ١ — مسألة فلترة بسيطة</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    "أظهر ... الذين/التي ... [شرط رقمي أو نصي]"
+  </div>
+  <p>الهيكل: <code>SELECT ... FROM ... WHERE ...</code> — لا GROUP BY لا HAVING</p>
+  <pre><span class="cm">-- "أظهر الطلاب الذين معدلهم أعلى من 3.5"</span>
+<span class="kw">SELECT</span> <span class="tbl">StudentName</span>, <span class="tbl">GPA</span>
+<span class="kw">FROM</span>   <span class="tbl">Students</span>
+<span class="kw">WHERE</span>  <span class="tbl">GPA</span> &gt; <span class="num">3.5</span>;</pre>
+
+  <h3>النمط ٢ — مسألة تجميع بدوال</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    "اعرض ... لكل قسم/فئة ..." أو وجود COUNT / SUM / AVG
+  </div>
+  <p>الهيكل: <code>SELECT ... GROUP BY ...</code> — الشرط على المجموعة يذهب لـ HAVING</p>
+  <pre><span class="cm">-- "اعرض مجموع الرواتب لكل قسم"</span>
+<span class="kw">SELECT</span>   <span class="tbl">DeptName</span>, <span class="fn">SUM</span>(<span class="tbl">Salary</span>) <span class="kw">AS</span> TotalSalary
+<span class="kw">FROM</span>     <span class="tbl">Employees</span>
+<span class="kw">GROUP BY</span> <span class="tbl">DeptName</span>;</pre>
+
+  <h3>النمط ٣ — مسألة ربط جدولين</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    المطلوب من جدولين منفصلين — "اسم الطالب وإسم المادة"، "اسم الموظف واسم قسمه"
+  </div>
+  <p>الهيكل: <code>SELECT ... FROM A JOIN B ON A.key = B.key</code></p>
+  <pre><span class="cm">-- "أظهر أسماء الموظفين مع أسماء أقسامهم"</span>
+<span class="kw">SELECT</span> e.<span class="tbl">EmpName</span>, d.<span class="tbl">DeptName</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">Departments</span> d <span class="kw">ON</span> e.<span class="tbl">DeptID</span> = d.<span class="tbl">DeptID</span>;</pre>
+
+  <h3>النمط ٤ — مقارنة بالمتوسط أو القيم الكلية</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    "أكثر من المتوسط"، "يزيد على الإجمالي"، "أعلى من أعلى قيمة في قسم X"
+  </div>
+  <p>الهيكل: <code>WHERE column > (SELECT AVG/MAX/SUM ... FROM ...)</code> — استفسار فرعي</p>
+  <pre><span class="cm">-- "أظهر الموظفين الذين رواتبهم أعلى من متوسط الرواتب الكلي"</span>
+<span class="kw">SELECT</span> <span class="tbl">EmpName</span>, <span class="tbl">Salary</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span>
+<span class="kw">WHERE</span>  <span class="tbl">Salary</span> &gt; (<span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="tbl">Salary</span>) <span class="kw">FROM</span> <span class="tbl">Employees</span>);</pre>
+
+  <h3>النمط ٥ — "الأعلى / الأدنى / أول N"</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    "أعلى راتب"، "أكثر 3 موظفين"، "أقل طالب درجةً"
+  </div>
+  <p>الهيكل: <code>SELECT TOP N ... ORDER BY column DESC/ASC</code></p>
+  <pre><span class="cm">-- "أظهر أعلى 3 موظفين من حيث الراتب"</span>
+<span class="kw">SELECT TOP</span> <span class="num">3</span> <span class="tbl">EmpName</span>, <span class="tbl">Salary</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span>
+<span class="kw">ORDER BY</span> <span class="tbl">Salary</span> <span class="kw">DESC</span>;</pre>
+
+  <h3>النمط ٦ — "الذين لم يسجّلوا / لا يوجد لهم"</h3>
+  <div class="card blue">
+    <div class="card-title">🔍 علامات التعرف</div>
+    "لم يشتركوا في"، "لا يوجد لهم"، "الغائبون عن" — يحتاج NOT IN أو NOT EXISTS
+  </div>
+  <pre><span class="cm">-- "أظهر الطلاب الذين لم يسجّلوا في أي مادة"</span>
+<span class="kw">SELECT</span> <span class="tbl">StudentName</span>
+<span class="kw">FROM</span>   <span class="tbl">Students</span>
+<span class="kw">WHERE</span>  <span class="tbl">StudentID</span> <span class="kw">NOT IN</span> (
+    <span class="kw">SELECT DISTINCT</span> <span class="tbl">StudentID</span>
+    <span class="kw">FROM</span> <span class="tbl">Enrollments</span>
+);</pre>
+
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 5: PRACTICAL EXAMPLE -->
+<!-- ══════════════════════════════════════════ -->
+<section id="practical">
+  <div class="section-label">التطبيق الكامل</div>
+  <h2>مثال عملي متكامل</h2>
+
+  <p>هذا المثال يطبّق كل شيء: ترجمة النص العربي، تحديد النمط، وكتابة الاستفسار خطوة بخطوة.</p>
+
+  <h3>قاعدة البيانات المستخدمة</h3>
+  <pre><span class="cm">-- الجداول المتاحة:</span>
+<span class="tbl">Employees</span>    (EmpID, EmpName, Salary, DeptID, HireDate)
+<span class="tbl">Departments</span>  (DeptID, DeptName, ManagerID)
+<span class="tbl">Projects</span>     (ProjectID, ProjectName, Budget)
+<span class="tbl">Assignments</span>  (EmpID, ProjectID, HoursWorked)</pre>
+
+  <hr style="border-color:var(--border);margin:2rem 0">
+
+  <!-- EXAMPLE A -->
+  <div class="example-problem">
+    <div class="problem-label">المسألة الأولى</div>
+    <div class="problem-text">
+      "أظهر اسم كل موظف واسم قسمه ومجموع الساعات التي عملها في مشاريع،
+      لكن فقط الموظفين الذين انضموا بعد 2020 وساعاتهم الإجمالية تتجاوز 100 ساعة،
+      مرتّباً من الأعلى ساعةً للأقل."
+    </div>
+  </div>
+
+  <h4>الخطوة ١ — تحليل النص</h4>
+  <div class="solution-steps">
+    <div class="sol-step">
+      <div class="sol-step-num">ما المطلوب؟ (SELECT)</div>
+      <div class="sol-step-text">اسم الموظف <strong>(EmpName)</strong> + اسم القسم <strong>(DeptName)</strong> + مجموع الساعات <strong>(SUM(HoursWorked))</strong></div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">من أين؟ (FROM + JOIN)</div>
+      <div class="sol-step-text">EmpName في <strong>Employees</strong> | DeptName في <strong>Departments</strong> | HoursWorked في <strong>Assignments</strong> — ثلاثة جداول تحتاج JOIN مزدوج</div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">شروط الصفوف (WHERE)</div>
+      <div class="sol-step-text">"انضموا بعد 2020" → <strong>WHERE HireDate > '2020-12-31'</strong></div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">تجميع؟ (GROUP BY)</div>
+      <div class="sol-step-text">"مجموع ساعات كل موظف" → GROUP BY على EmpID و EmpName و DeptName</div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">شروط المجموعات (HAVING)</div>
+      <div class="sol-step-text">"ساعاتهم الإجمالية تتجاوز 100" → <strong>HAVING SUM(HoursWorked) > 100</strong></div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">ترتيب (ORDER BY)</div>
+      <div class="sol-step-text">"من الأعلى ساعة للأقل" → <strong>ORDER BY TotalHours DESC</strong></div>
+    </div>
+  </div>
+
+  <h4>الخطوة ٢ — بناء الاستفسار</h4>
+
+  <pre><span class="cm">-- ① نبدأ بتحديد الجداول والربط</span>
+<span class="kw">SELECT</span>
+    e.<span class="tbl">EmpName</span>,
+    d.<span class="tbl">DeptName</span>,
+    <span class="fn">SUM</span>(a.<span class="tbl">HoursWorked</span>) <span class="kw">AS</span> TotalHours   <span class="cm">-- مجموع الساعات لكل موظف</span>
+
+<span class="kw">FROM</span> <span class="tbl">Employees</span> e                         <span class="cm">-- ② الجدول الرئيسي</span>
+
+<span class="kw">INNER JOIN</span> <span class="tbl">Departments</span> d                  <span class="cm">-- ③ ربط القسم</span>
+    <span class="kw">ON</span> e.<span class="tbl">DeptID</span> = d.<span class="tbl">DeptID</span>
+
+<span class="kw">INNER JOIN</span> <span class="tbl">Assignments</span> a                  <span class="cm">-- ④ ربط المهام</span>
+    <span class="kw">ON</span> e.<span class="tbl">EmpID</span> = a.<span class="tbl">EmpID</span>
+
+<span class="kw">WHERE</span>  e.<span class="tbl">HireDate</span> &gt; <span class="str">'2020-12-31'</span>           <span class="cm">-- ⑤ فلتر: بعد 2020</span>
+
+<span class="kw">GROUP BY</span> e.<span class="tbl">EmpID</span>, e.<span class="tbl">EmpName</span>, d.<span class="tbl">DeptName</span>  <span class="cm">-- ⑥ تجميع لكل موظف</span>
+
+<span class="kw">HAVING</span>   <span class="fn">SUM</span>(a.<span class="tbl">HoursWorked</span>) &gt; <span class="num">100</span>         <span class="cm">-- ⑦ فلتر المجموعات</span>
+
+<span class="kw">ORDER BY</span> TotalHours <span class="kw">DESC</span>;                  <span class="cm">-- ⑧ ترتيب تنازلي</span></pre>
+
+  <h4>الخطوة ٣ — تتبع ترتيب التنفيذ</h4>
+  <table>
+    <tr><th>الخطوة</th><th>ما يحدث</th><th>عدد الصفوف (تقريبي)</th></tr>
+    <tr><td><strong>FROM Employees</strong></td><td>يجلب كل الموظفين</td><td>500 صف</td></tr>
+    <tr><td><strong>JOIN Departments</strong></td><td>يضيف اسم القسم لكل موظف</td><td>500 صف</td></tr>
+    <tr><td><strong>JOIN Assignments</strong></td><td>يكرر كل موظف بعدد مهامه</td><td>2000 صف</td></tr>
+    <tr><td><strong>WHERE HireDate > 2020</strong></td><td>يحذف القدامى</td><td>800 صف</td></tr>
+    <tr><td><strong>GROUP BY EmpID</strong></td><td>يجمع مهام كل موظف في صف واحد</td><td>200 صف</td></tr>
+    <tr><td><strong>HAVING SUM > 100</strong></td><td>يبقي من تجاوز 100 ساعة</td><td>45 صف</td></tr>
+    <tr><td><strong>SELECT</strong></td><td>يختار الأعمدة المطلوبة</td><td>45 صف</td></tr>
+    <tr><td><strong>ORDER BY DESC</strong></td><td>يرتب من الأعلى للأدنى</td><td>45 صف مرتبة</td></tr>
+  </table>
+
+  <hr style="border-color:var(--border);margin:2rem 0">
+
+  <!-- EXAMPLE B -->
+  <div class="example-problem">
+    <div class="problem-label">المسألة الثانية — أعقد</div>
+    <div class="problem-text">
+      "أظهر أسماء الموظفين الذين رواتبهم أعلى من متوسط رواتب قسمهم تحديداً (لا المتوسط الكلي)، مع اسم قسمهم."
+    </div>
+  </div>
+
+  <h4>تحليل: "متوسط قسمهم تحديداً" = Correlated Subquery</h4>
+  <div class="danger-box">
+    <div class="label">⚠️ الفخ الشائع</div>
+    الطالب يكتب <code>WHERE Salary > (SELECT AVG(Salary) FROM Employees)</code> وهذا خطأ — هذا متوسط الكل لا متوسط القسم الخاص به
+  </div>
+
+  <pre><span class="cm">-- الحل الصحيح: Correlated Subquery تعيد متوسط قسم كل موظف على حدة</span>
+<span class="kw">SELECT</span> e.<span class="tbl">EmpName</span>, e.<span class="tbl">Salary</span>, d.<span class="tbl">DeptName</span>
+<span class="kw">FROM</span>   <span class="tbl">Employees</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">Departments</span> d <span class="kw">ON</span> e.<span class="tbl">DeptID</span> = d.<span class="tbl">DeptID</span>
+<span class="kw">WHERE</span>  e.<span class="tbl">Salary</span> &gt; (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(e2.<span class="tbl">Salary</span>)         <span class="cm">-- متوسط...</span>
+    <span class="kw">FROM</span>   <span class="tbl">Employees</span> e2
+    <span class="kw">WHERE</span>  e2.<span class="tbl">DeptID</span> = e.<span class="tbl">DeptID</span>   <span class="cm">-- ...نفس قسم الموظف الحالي</span>
+);
+
+<span class="cm">-- ⚡ ملاحظة: الاستفسار الداخلي يُنفَّذ مرة لكل موظف في الخارجي</span>
+<span class="cm">-- إذا كان 500 موظف → 500 تنفيذ للاستفسار الداخلي</span></pre>
+
+  <hr style="border-color:var(--border);margin:2rem 0">
+
+  <!-- EXAMPLE C -->
+  <div class="example-problem">
+    <div class="problem-label">المسألة الثالثة — Trigger عملي</div>
+    <div class="problem-text">
+      "صمّم نظاماً يسجّل تلقائياً أي زيادة في راتب موظف، مع حفظ الراتب القديم والجديد وتاريخ التغيير."
+    </div>
+  </div>
+
+  <h4>تحليل: "تلقائياً عند التغيير" = AFTER UPDATE Trigger</h4>
+
+  <div class="solution-steps">
+    <div class="sol-step">
+      <div class="sol-step-num">الخطوة ١ — أنشئ جدول السجل أولاً</div>
+      <div class="sol-step-text">Trigger يحتاج جدولاً يكتب فيه. أنشئه قبل الـ Trigger.</div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">الخطوة ٢ — حدّد: AFTER UPDATE على جدول Employees</div>
+      <div class="sol-step-text">الحدث = UPDATE الراتب. الجدول = Employees. النوع = AFTER.</div>
+    </div>
+    <div class="sol-step">
+      <div class="sol-step-num">الخطوة ٣ — استخدم INSERTED و DELETED</div>
+      <div class="sol-step-text">DELETED.Salary = الراتب القديم | INSERTED.Salary = الراتب الجديد</div>
+    </div>
+  </div>
+
+  <pre><span class="cm">-- أولاً: جدول السجلات</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">SalaryAuditLog</span> (
+    LogID       <span class="fn">INT</span> <span class="kw">IDENTITY</span> <span class="kw">PRIMARY KEY</span>,
+    EmpID       <span class="fn">INT</span>,
+    OldSalary   <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+    NewSalary   <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+    ChangedAt   <span class="fn">DATETIME</span> <span class="kw">DEFAULT</span> <span class="fn">GETDATE</span>()
+);
+
+<span class="cm">-- ثانياً: الـ Trigger</span>
+<span class="kw">CREATE TRIGGER</span> <span class="fn">trg_SalaryRaise</span>
+<span class="kw">ON</span> <span class="tbl">Employees</span>
+<span class="kw">AFTER UPDATE</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="cm">-- تشغيل فقط إذا تغيّر عمود Salary</span>
+    <span class="kw">IF UPDATE</span>(<span class="tbl">Salary</span>)
+    <span class="kw">BEGIN</span>
+        <span class="cm">-- سجّل فقط الزيادات (لا التخفيضات)</span>
+        <span class="kw">INSERT INTO</span> <span class="tbl">SalaryAuditLog</span> (EmpID, OldSalary, NewSalary)
+        <span class="kw">SELECT</span>
+            d.<span class="tbl">EmpID</span>,
+            d.<span class="tbl">Salary</span>,    <span class="cm">-- DELETED = القيمة القديمة</span>
+            i.<span class="tbl">Salary</span>     <span class="cm">-- INSERTED = القيمة الجديدة</span>
+        <span class="kw">FROM</span>   DELETED d
+        <span class="kw">JOIN</span>   INSERTED i <span class="kw">ON</span> d.<span class="tbl">EmpID</span> = i.<span class="tbl">EmpID</span>
+        <span class="kw">WHERE</span>  i.<span class="tbl">Salary</span> &gt; d.<span class="tbl">Salary</span>;  <span class="cm">-- فقط الزيادات</span>
+    <span class="kw">END</span>
+<span class="kw">END</span>;</pre>
+
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 6: COMMON MISTAKES -->
+<!-- ══════════════════════════════════════════ -->
+<section id="mistakes">
+  <div class="section-label">تحذير</div>
+  <h2>أخطاء الترتيب الأكثر شيوعاً</h2>
+
+  <h3>الخطأ ١ — وضع دالة التجميع في WHERE</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h4 style="color:var(--danger)">❌ خطأ</h4>
+      <pre style="margin:0"><span class="kw">SELECT</span> DeptName
+<span class="kw">FROM</span>   Employees
+<span class="kw">WHERE</span>  <span class="fn">SUM</span>(Salary) &gt; <span class="num">50000</span>  <span class="cm">-- ❌</span>
+<span class="kw">GROUP BY</span> DeptName;</pre>
+    </div>
+    <div class="compare-card">
+      <h4 style="color:var(--accent3)">✅ صحيح</h4>
+      <pre style="margin:0"><span class="kw">SELECT</span>   DeptName
+<span class="kw">FROM</span>     Employees
+<span class="kw">GROUP BY</span> DeptName
+<span class="kw">HAVING</span>   <span class="fn">SUM</span>(Salary) &gt; <span class="num">50000</span>; <span class="cm">-- ✅</span></pre>
+    </div>
+  </div>
+
+  <h3>الخطأ ٢ — استخدام Alias في WHERE</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h4 style="color:var(--danger)">❌ خطأ</h4>
+      <pre style="margin:0"><span class="kw">SELECT</span> EmpName, Salary*<span class="num">1.1</span> <span class="kw">AS</span> NewSal
+<span class="kw">FROM</span>   Employees
+<span class="kw">WHERE</span>  NewSal &gt; <span class="num">6000</span>;  <span class="cm">-- ❌ NewSal لا يوجد بعد</span></pre>
+    </div>
+    <div class="compare-card">
+      <h4 style="color:var(--accent3)">✅ صحيح</h4>
+      <pre style="margin:0"><span class="kw">SELECT</span> EmpName, Salary*<span class="num">1.1</span> <span class="kw">AS</span> NewSal
+<span class="kw">FROM</span>   Employees
+<span class="kw">WHERE</span>  Salary*<span class="num">1.1</span> &gt; <span class="num">6000</span>; <span class="cm">-- ✅ كرر التعبير</span></pre>
+    </div>
+  </div>
+
+  <h3>الخطأ ٣ — نسيان عمود في GROUP BY</h3>
+  <div class="danger-box">
+    <div class="label">⚠️ القاعدة</div>
+    كل عمود في SELECT يجب أن يكون إما في GROUP BY أو داخل دالة تجميع (SUM, COUNT...). أي عمود خارج هذين يسبب خطأ.
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h4 style="color:var(--danger)">❌ خطأ</h4>
+      <pre style="margin:0"><span class="kw">SELECT</span> DeptName, EmpName, <span class="cm">-- EmpName ليس في GROUP BY</span>
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> Total
+<span class="kw">FROM</span>   Employees
+<span class="kw">GROUP BY</span> DeptName;  <span class="cm">-- ❌ EmpName مفقود</span></pre>
+    </div>
+    <div class="compare-card">
+      <h4 style="color:var(--accent3)">✅ صحيح (خياران)</h4>
+      <pre style="margin:0"><span class="cm">-- إما أضف EmpName للـ GROUP BY:</span>
+<span class="kw">GROUP BY</span> DeptName, EmpName;
+
+<span class="cm">-- أو احذفه من SELECT:</span>
+<span class="kw">SELECT</span> DeptName, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> Total
+<span class="kw">GROUP BY</span> DeptName;</pre>
+    </div>
+  </div>
+
+  <h3>الخطأ ٤ — Subquery تُعيد أكثر من قيمة مع =</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h4 style="color:var(--danger)">❌ خطأ</h4>
+      <pre style="margin:0"><span class="kw">WHERE</span> DeptID = (
+    <span class="kw">SELECT</span> DeptID     <span class="cm">-- قد يُعيد أكثر من قيمة!</span>
+    <span class="kw">FROM</span>   Departments
+    <span class="kw">WHERE</span>  City = <span class="str">'Riyadh'</span>
+);  <span class="cm">-- ❌ = مع قائمة</span></pre>
+    </div>
+    <div class="compare-card">
+      <h4 style="color:var(--accent3)">✅ صحيح</h4>
+      <pre style="margin:0"><span class="kw">WHERE</span> DeptID <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> DeptID
+    <span class="kw">FROM</span>   Departments
+    <span class="kw">WHERE</span>  City = <span class="str">'Riyadh'</span>
+);  <span class="cm">-- ✅ IN يعمل مع قائمة</span></pre>
+    </div>
+  </div>
+
+  <h3>الخطأ ٥ — JOIN بدون ON</h3>
+  <div class="warn-box">
+    <div class="label">🎯 التذكرة</div>
+    كل JOIN يحتاج ON. كل ON يحتاج حقلاً مشتركاً. اسأل نفسك: "ما العلاقة بين الجدولين؟" — الإجابة هي شرط ON.
+  </div>
+  <pre><span class="cm">-- سؤال: "ما الرابط بين Employees و Departments؟"</span>
+<span class="cm">-- الجواب: عمود DeptID موجود في كلا الجدولين</span>
+<span class="kw">JOIN</span> Departments d <span class="kw">ON</span> e.DeptID = d.DeptID;  <span class="cm">-- ✅</span></pre>
+
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 7: CHEAT SHEET -->
+<!-- ══════════════════════════════════════════ -->
+<section id="cheat">
+  <div class="section-label">المرجع النهائي</div>
+  <div class="final-cheat">
+    <h2 style="color:var(--gold);border-bottom-color:var(--gold)">ورقة المرجع السريع</h2>
+    <div class="cheat-grid">
+
+      <div class="cheat-item">
+        <h4>🔢 ترتيب التنفيذ</h4>
+        <ol style="font-size:0.83rem;color:#cdd9e5">
+          <li>FROM + JOIN</li>
+          <li>ON (شرط الربط)</li>
+          <li>WHERE (صفوف)</li>
+          <li>GROUP BY</li>
+          <li>HAVING (مجموعات)</li>
+          <li>SELECT</li>
+          <li>DISTINCT</li>
+          <li>ORDER BY</li>
+          <li>TOP / LIMIT</li>
+        </ol>
+      </div>
+
+      <div class="cheat-item">
+        <h4>🔍 تشخيص النمط</h4>
+        <ul style="font-size:0.83rem;color:#cdd9e5">
+          <li>"لكل قسم/فئة" → GROUP BY</li>
+          <li>"يزيد عدده/مجموعه" → HAVING</li>
+          <li>"أعلى من المتوسط" → Subquery</li>
+          <li>"متوسط قسمه تحديداً" → Correlated</li>
+          <li>"لم يسجّل/لا يوجد له" → NOT IN</li>
+          <li>"أعلى N" → TOP N + ORDER BY DESC</li>
+          <li>"تلقائياً عند" → Trigger</li>
+          <li>"من جدولين" → JOIN</li>
+        </ul>
+      </div>
+
+      <div class="cheat-item">
+        <h4>📌 WHERE vs HAVING</h4>
+        <table style="font-size:0.8rem">
+          <tr><th>WHERE</th><th>HAVING</th></tr>
+          <tr><td>على صفوف</td><td>على مجموعات</td></tr>
+          <tr><td>قبل GROUP BY</td><td>بعد GROUP BY</td></tr>
+          <tr><td>لا يقبل SUM/AVG</td><td>يقبل SUM/AVG</td></tr>
+          <tr><td>يعمل على أعمدة</td><td>يعمل على تجميعات</td></tr>
+        </table>
+      </div>
+
+      <div class="cheat-item">
+        <h4>⚡ قواعد Alias</h4>
+        <ul style="font-size:0.83rem;color:#cdd9e5">
+          <li>✅ ORDER BY يقبل Alias</li>
+          <li>❌ WHERE لا يقبل Alias</li>
+          <li>❌ HAVING لا يقبل Alias</li>
+          <li>❌ GROUP BY لا يقبل Alias (في معظم قواعد البيانات)</li>
+        </ul>
+      </div>
+
+      <div class="cheat-item">
+        <h4>🔗 متى أستخدم أي JOIN؟</h4>
+        <ul style="font-size:0.83rem;color:#cdd9e5">
+          <li>INNER → فقط المتطابق</li>
+          <li>LEFT → كل اليسار + المتطابق</li>
+          <li>RIGHT → كل اليمين + المتطابق</li>
+          <li>FULL → كل شيء</li>
+          <li>"حتى لو لا يوجد له" → LEFT JOIN</li>
+        </ul>
+      </div>
+
+      <div class="cheat-item">
+        <h4>🧠 كلمات عربية رئيسية</h4>
+        <ul style="font-size:0.83rem;color:#cdd9e5">
+          <li>لكل / بحسب → GROUP BY</li>
+          <li>يزيد عدده → HAVING COUNT</li>
+          <li>مجموعه / إجماليه → SUM → HAVING</li>
+          <li>أعلى من المتوسط → > (SELECT AVG)</li>
+          <li>بدون تكرار → DISTINCT</li>
+          <li>تلقائياً عند حذف → AFTER DELETE Trigger</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  استراتيجية حل SQL · قواعد البيانات المتقدمة · للاستخدام الشخصي في المذاكرة
+</footer>
+
+</body>
+</html>
