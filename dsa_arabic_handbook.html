@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دليل هياكل البيانات والخوارزميات — امتحان ناجح</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════════════════ */
+:root {
+  --bg:         #f8fafc;
+  --bg2:        #f1f5f9;
+  --bg3:        #e2e8f0;
+  --surface:    #ffffff;
+  --border:     #e2e8f0;
+  --border2:    #cbd5e1;
+  --text:       #0f172a;
+  --text2:      #475569;
+  --text3:      #94a3b8;
+  --blue:       #2563eb;
+  --blue-l:     #dbeafe;
+  --blue-m:     #93c5fd;
+  --emerald:    #059669;
+  --emerald-l:  #d1fae5;
+  --amber:      #d97706;
+  --amber-l:    #fef3c7;
+  --red:        #dc2626;
+  --red-l:      #fee2e2;
+  --violet:     #7c3aed;
+  --violet-l:   #ede9fe;
+  --cyan:       #0891b2;
+  --cyan-l:     #cffafe;
+  --slate:      #1e293b;
+  --radius:     10px;
+  --shadow:     0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+  --shadow-lg:  0 10px 40px rgba(0,0,0,.10);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  line-height: 1.85;
+  transition: background .25s, color .25s;
+}
+body.dark {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+  --surface: #161b22; --border: #21262d; --border2: #30363d;
+  --text: #f0f6fc; --text2: #8b949e; --text3: #484f58;
+  --blue-l: #1c2a3a; --emerald-l: #0d2518; --amber-l: #2a1f08;
+  --red-l: #2a0d0d; --violet-l: #1e1040; --cyan-l: #082028;
+  --shadow: 0 1px 3px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.4);
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul, ol { padding-right: 1.4rem; }
+li { margin-bottom: .3rem; color: var(--text2); }
+strong { color: var(--text); font-weight: 700; }
+p { color: var(--text2); margin-bottom: .75rem; }
+h2, h3, h4 { color: var(--text); font-weight: 700; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: .95rem; color: var(--text2); }
+
+code, pre {
+  font-family: 'IBM Plex Mono', monospace;
+  direction: ltr;
+  text-align: left;
+}
+code {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: .1rem .4rem;
+  font-size: .83rem;
+  color: var(--violet);
+}
+pre {
+  background: var(--slate);
+  color: #e2e8f0;
+  border-radius: var(--radius);
+  padding: 1.1rem 1.3rem;
+  overflow-x: auto;
+  font-size: .83rem;
+  line-height: 1.7;
+  margin: .75rem 0 1rem;
+}
+pre .kw  { color: #93c5fd; }
+pre .fn  { color: #86efac; }
+pre .cm  { color: #64748b; font-style: italic; }
+pre .str { color: #fde68a; }
+pre .num { color: #fb923c; }
+
+/* ══════════════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+/* ══════════════════════════════════════════════════════════
+   FIXED HEADER
+══════════════════════════════════════════════════════════ */
+.site-header {
+  position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+  background: rgba(248,250,252,.88);
+  backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .6rem 1.5rem;
+  transition: background .25s;
+}
+body.dark .site-header { background: rgba(13,17,23,.88); }
+.site-header .logo {
+  font-weight: 900; font-size: 1rem; color: var(--blue);
+  display: flex; align-items: center; gap: .5rem;
+}
+.logo-badge {
+  background: var(--blue); color: #fff;
+  border-radius: 6px; padding: .15rem .5rem;
+  font-size: .75rem; font-weight: 700;
+}
+.header-nav { display: flex; align-items: center; gap: .5rem; }
+.nav-link {
+  font-size: .82rem; color: var(--text2); padding: .3rem .6rem;
+  border-radius: 6px; cursor: pointer;
+  border: none; background: transparent;
+  font-family: 'Cairo', sans-serif;
+  transition: background .15s, color .15s;
+}
+.nav-link:hover { background: var(--bg2); color: var(--text); }
+.dark-toggle {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: all .15s; box-shadow: var(--shadow);
+}
+.dark-toggle:hover { border-color: var(--blue); }
+
+/* ══════════════════════════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════════════════════════ */
+.container {
+  max-width: 1060px; margin: 0 auto;
+  padding: 0 1.25rem;
+}
+.main-content { padding-top: 72px; }
+
+/* ══════════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════════ */
+.hero {
+  padding: 4rem 0 3rem;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 40%, #f0fdf4 100%);
+}
+body.dark .hero-bg {
+  background: linear-gradient(135deg, #0d1117 0%, #0f172a 50%, #0d1117 100%);
+}
+.hero-glow {
+  position: absolute; top: -80px; right: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--blue-l); color: var(--blue);
+  border: 1px solid var(--blue-m);
+  border-radius: 99px; padding: .25rem 1rem;
+  font-size: .78rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.hero h1 {
+  font-size: clamp(2rem,5vw,3.2rem);
+  font-weight: 900; line-height: 1.15;
+  color: var(--text); margin-bottom: 1rem;
+}
+.hero h1 .accent { color: var(--blue); }
+.hero-sub {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 540px; margin-bottom: 2rem;
+}
+.hero-badges { display: flex; flex-wrap: wrap; gap: .5rem; }
+.hbadge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .8rem; border-radius: 99px;
+  font-size: .8rem; font-weight: 600; border: 1px solid;
+}
+.hbadge.blue   { background: var(--blue-l);   color: var(--blue);    border-color: var(--blue-m); }
+.hbadge.emerald{ background: var(--emerald-l); color: var(--emerald); border-color: #6ee7b7; }
+.hbadge.amber  { background: var(--amber-l);  color: var(--amber);   border-color: #fcd34d; }
+.hbadge.violet { background: var(--violet-l); color: var(--violet);  border-color: #c4b5fd; }
+
+/* ══════════════════════════════════════════════════════════
+   SECTION HEADERS
+══════════════════════════════════════════════════════════ */
+.section-wrap { padding: 2.5rem 0; }
+.section-wrap + .section-wrap { border-top: 1px solid var(--border); }
+.section-eyebrow {
+  font-size: .7rem; font-weight: 700; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: .35rem;
+}
+.section-title {
+  font-size: 1.55rem; font-weight: 900; color: var(--text);
+  margin-bottom: .4rem;
+}
+.section-sub { color: var(--text2); font-size: .95rem; margin-bottom: 1.75rem; }
+
+/* ══════════════════════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+/* Callout cards */
+.callout {
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: .75rem 0;
+  border: 1px solid;
+  display: flex; gap: .85rem; align-items: flex-start;
+}
+.callout-icon { font-size: 1.2rem; line-height: 1; flex-shrink: 0; margin-top: .1rem; }
+.callout-body { flex: 1; }
+.callout-title { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .25rem; }
+.callout.blue   { background: var(--blue-l);    border-color: var(--blue-m);  }
+.callout.blue   .callout-title { color: var(--blue); }
+.callout.emerald{ background: var(--emerald-l); border-color: #6ee7b7; }
+.callout.emerald .callout-title { color: var(--emerald); }
+.callout.amber  { background: var(--amber-l);   border-color: #fcd34d; }
+.callout.amber  .callout-title { color: var(--amber); }
+.callout.red    { background: var(--red-l);     border-color: #fca5a5; }
+.callout.red    .callout-title { color: var(--red); }
+.callout.violet { background: var(--violet-l);  border-color: #c4b5fd; }
+.callout.violet .callout-title { color: var(--violet); }
+.callout.cyan   { background: var(--cyan-l);    border-color: #67e8f9; }
+.callout.cyan   .callout-title { color: var(--cyan); }
+
+.callout p, .callout li { color: var(--text2); font-size: .9rem; }
+.callout strong { color: var(--text); }
+
+/* Left-border cards */
+.lcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-right: 4px solid;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: .6rem 0;
+  box-shadow: var(--shadow);
+}
+.lcard.blue   { border-right-color: var(--blue); }
+.lcard.emerald{ border-right-color: var(--emerald); }
+.lcard.amber  { border-right-color: var(--amber); }
+.lcard.red    { border-right-color: var(--red); }
+.lcard.violet { border-right-color: var(--violet); }
+.lcard.cyan   { border-right-color: var(--cyan); }
+.lcard h4 { margin-bottom: .3rem; color: var(--text); }
+.lcard p, .lcard li { font-size: .9rem; color: var(--text2); }
+
+/* ══════════════════════════════════════════════════════════
+   SORTING GRID
+══════════════════════════════════════════════════════════ */
+.sort-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.1rem; }
+.sort-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s, transform .2s;
+}
+.sort-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.sort-header {
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: .75rem;
+  border-bottom: 1px solid var(--border);
+}
+.sort-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.sort-icon.blue   { background: var(--blue-l);    }
+.sort-icon.emerald{ background: var(--emerald-l); }
+.sort-icon.violet { background: var(--violet-l);  }
+.sort-icon.amber  { background: var(--amber-l);   }
+.sort-icon.cyan   { background: var(--cyan-l);    }
+.sort-icon.red    { background: var(--red-l);      }
+.sort-name { font-weight: 700; font-size: .95rem; color: var(--text); }
+.sort-type { font-size: .75rem; color: var(--text3); }
+.sort-body { padding: 1rem 1.25rem; }
+.sort-body p { font-size: .88rem; margin-bottom: .6rem; }
+.sort-body ul li { font-size: .87rem; }
+.complexity-row {
+  display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .85rem;
+}
+.cx-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .75rem; font-weight: 600;
+  padding: .2rem .6rem; border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.cx-badge.time { background: var(--blue-l);    color: var(--blue); }
+.cx-badge.space{ background: var(--violet-l);  color: var(--violet); }
+.cx-badge.stable{ background: var(--emerald-l); color: var(--emerald); }
+.cx-badge.unstable{ background: var(--amber-l); color: var(--amber); }
+
+/* ══════════════════════════════════════════════════════════
+   STEP-BY-STEP TRACE BOX
+══════════════════════════════════════════════════════════ */
+.trace-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: .9rem 1.1rem;
+  margin: .75rem 0;
+}
+.trace-box .trace-title {
+  font-size: .75rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem;
+}
+.trace-row {
+  display: flex; gap: .5rem; align-items: baseline;
+  margin-bottom: .3rem;
+}
+.trace-label {
+  min-width: 60px; font-size: .78rem; font-weight: 700;
+  color: var(--text3); flex-shrink: 0;
+}
+.trace-arr {
+  display: flex; gap: .3rem; flex-wrap: wrap;
+}
+.ta {
+  min-width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700; font-family: 'IBM Plex Mono', monospace;
+}
+.ta.hl  { background: var(--blue-l);    border-color: var(--blue-m);  color: var(--blue); }
+.ta.swp { background: var(--amber-l);   border-color: #fcd34d;        color: var(--amber); }
+.ta.done{ background: var(--emerald-l); border-color: #6ee7b7;        color: var(--emerald); }
+.ta.pivot{ background: var(--red-l);    border-color: #fca5a5;        color: var(--red); }
+
+/* ══════════════════════════════════════════════════════════
+   DSA DASHBOARD (Data Structures)
+══════════════════════════════════════════════════════════ */
+.search-bar-wrap {
+  display: flex; align-items: center; gap: .6rem;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: .5rem 1rem;
+  box-shadow: var(--shadow);
+  transition: border-color .15s;
+  margin-bottom: 1.5rem;
+}
+.search-bar-wrap:focus-within { border-color: var(--blue); }
+.search-bar-wrap svg { color: var(--text3); flex-shrink: 0; }
+#dsaSearch {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-family: 'Cairo', sans-serif; font-size: .95rem; color: var(--text);
+  direction: rtl;
+}
+.ds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; }
+.ds-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s, transform .2s;
+}
+.ds-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ds-card.hidden { display: none; }
+.ds-head {
+  padding: .9rem 1.2rem;
+  display: flex; align-items: center; gap: .75rem;
+  border-bottom: 1px solid var(--border);
+}
+.ds-chip {
+  padding: .2rem .65rem; border-radius: 99px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+}
+.ds-chip.blue   { background: var(--blue-l);    color: var(--blue); }
+.ds-chip.emerald{ background: var(--emerald-l); color: var(--emerald); }
+.ds-chip.violet { background: var(--violet-l);  color: var(--violet); }
+.ds-chip.amber  { background: var(--amber-l);   color: var(--amber); }
+.ds-chip.cyan   { background: var(--cyan-l);    color: var(--cyan); }
+.ds-name { font-weight: 800; font-size: 1rem; color: var(--text); }
+.ds-body { padding: 1rem 1.2rem; }
+.ds-body p { font-size: .88rem; }
+.ds-body ul li { font-size: .87rem; }
+.formula-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem 1rem; margin: .6rem 0;
+  font-family: 'IBM Plex Mono', monospace; font-size: .83rem;
+  direction: ltr; text-align: left;
+}
+.formula-box .fl { color: var(--blue); font-weight: 600; }
+.formula-box .fr { color: var(--emerald); }
+.formula-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: .2rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TRAVERSAL VISUAL
+══════════════════════════════════════════════════════════ */
+.traversal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.trav-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.1rem;
+  box-shadow: var(--shadow);
+}
+.trav-title { font-weight: 700; color: var(--text); margin-bottom: .35rem; font-size: .95rem; }
+.trav-uses { display: flex; align-items: center; gap: .4rem; margin-top: .5rem; }
+.trav-pill {
+  font-size: .75rem; font-weight: 600; padding: .15rem .55rem;
+  border-radius: 99px; border: 1px solid;
+}
+.trav-pill.stack { background: var(--violet-l); border-color: #c4b5fd; color: var(--violet); }
+.trav-pill.queue { background: var(--blue-l);   border-color: var(--blue-m); color: var(--blue); }
+
+/* ══════════════════════════════════════════════════════════
+   PRIORITY BARS
+══════════════════════════════════════════════════════════ */
+.priority-list { display: flex; flex-direction: column; gap: .6rem; }
+.priority-item { display: flex; align-items: center; gap: 1rem; }
+.priority-label { min-width: 200px; font-size: .88rem; font-weight: 600; color: var(--text); }
+.priority-track { flex: 1; height: 8px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+.priority-fill { height: 100%; border-radius: 99px; background: var(--blue); transition: width .8s ease; }
+.priority-num { font-size: .78rem; font-weight: 700; color: var(--text3); min-width: 30px; text-align: left; }
+
+/* ══════════════════════════════════════════════════════════
+   SURVIVAL GUIDE MISTAKES
+══════════════════════════════════════════════════════════ */
+.mistake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .9rem; }
+.mistake-card {
+  background: var(--red-l); border: 1px solid #fca5a5;
+  border-radius: var(--radius); padding: 1rem 1.1rem;
+  box-shadow: var(--shadow);
+}
+body.dark .mistake-card { background: #2a0d0d; border-color: #7f1d1d; }
+.mistake-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+.mistake-title { font-weight: 700; color: var(--red); font-size: .9rem; margin-bottom: .3rem; }
+.mistake-text { font-size: .85rem; color: var(--text2); }
+
+/* ══════════════════════════════════════════════════════════
+   EXAM QUESTIONS (Accordion)
+══════════════════════════════════════════════════════════ */
+.questions-grid { display: flex; flex-direction: column; gap: .6rem; }
+.q-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow); transition: box-shadow .2s;
+}
+.q-item:hover { box-shadow: var(--shadow-md); }
+.q-trigger {
+  width: 100%; display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.2rem; cursor: pointer;
+  background: transparent; border: none; text-align: right;
+  font-family: 'Cairo', sans-serif; transition: background .15s;
+}
+.q-trigger:hover { background: var(--bg2); }
+.q-num {
+  min-width: 32px; height: 32px; border-radius: 8px;
+  background: var(--blue-l); color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78rem; font-weight: 800; flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.q-text { flex: 1; font-size: .92rem; font-weight: 600; color: var(--text); text-align: right; }
+.q-tag {
+  font-size: .72rem; font-weight: 700; padding: .15rem .5rem;
+  border-radius: 99px; border: 1px solid; flex-shrink: 0;
+}
+.q-tag.sort  { background: var(--blue-l);    border-color: var(--blue-m); color: var(--blue); }
+.q-tag.ds    { background: var(--violet-l);  border-color: #c4b5fd; color: var(--violet); }
+.q-tag.graph { background: var(--emerald-l); border-color: #6ee7b7; color: var(--emerald); }
+.q-tag.hash  { background: var(--amber-l);   border-color: #fcd34d; color: var(--amber); }
+.q-tag.heap  { background: var(--cyan-l);    border-color: #67e8f9; color: var(--cyan); }
+.q-chevron { transition: transform .2s; flex-shrink: 0; color: var(--text3); }
+.q-item.open .q-chevron { transform: rotate(180deg); }
+.q-answer {
+  display: none; padding: 0 1.2rem 1rem; border-top: 1px solid var(--border);
+}
+.q-item.open .q-answer { display: block; }
+.q-answer-inner {
+  background: var(--bg2); border-radius: 8px;
+  padding: .85rem 1.1rem; margin-top: .75rem;
+}
+.q-answer-inner p { font-size: .9rem; margin-bottom: .5rem; }
+.q-answer-inner ul li { font-size: .88rem; }
+.q-answer-inner:last-child { margin-bottom: 0; }
+
+/* ══════════════════════════════════════════════════════════
+   CHEAT SHEET
+══════════════════════════════════════════════════════════ */
+.cheat-container {
+  background: var(--slate);
+  border-radius: 14px; padding: 1.75rem;
+  color: #e2e8f0;
+}
+body.dark .cheat-container { background: #0d1117; border: 1px solid #21262d; }
+.cheat-title {
+  font-size: 1.3rem; font-weight: 900; color: #f8fafc;
+  margin-bottom: 1.25rem; text-align: center;
+}
+.cheat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+@media(max-width:700px){ .cheat-grid { grid-template-columns: 1fr; } }
+.cheat-block {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09);
+  border-radius: 10px; padding: .9rem 1rem;
+}
+.cheat-block-title {
+  font-size: .7rem; font-weight: 700; letter-spacing: .15em;
+  text-transform: uppercase; color: #93c5fd; margin-bottom: .6rem;
+}
+.cheat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .3rem; font-size: .82rem; }
+.cheat-row .ck { color: #94a3b8; }
+.cheat-row .cv { color: #86efac; font-family: 'IBM Plex Mono', monospace; font-size: .78rem; }
+.cheat-row .cv.blue { color: #93c5fd; }
+.cheat-row .cv.amber { color: #fde68a; }
+.cheat-divider { border: none; border-top: 1px solid rgba(255,255,255,.07); margin: .5rem 0; }
+
+/* ══════════════════════════════════════════════════════════
+   BST SVG + HEAP SVG
+══════════════════════════════════════════════════════════ */
+.diagram-scroll { overflow-x: auto; }
+.diagram-scroll svg { display: block; margin: 0 auto; }
+
+/* ══════════════════════════════════════════════════════════
+   TABLE
+══════════════════════════════════════════════════════════ */
+.tbl-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: var(--bg2); color: var(--text);
+  padding: .6rem .9rem; text-align: right;
+  border-bottom: 1px solid var(--border);
+  font-size: .84rem; font-weight: 700;
+}
+td {
+  padding: .55rem .9rem; border-bottom: 1px solid var(--border);
+  font-size: .85rem; color: var(--text2); vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg2); }
+
+/* ══════════════════════════════════════════════════════════
+   PRINT
+══════════════════════════════════════════════════════════ */
+@media print {
+  .site-header, .dark-toggle, .search-bar-wrap .search-bar-wrap { display: none !important; }
+  .main-content { padding-top: 0 !important; }
+  .q-answer { display: block !important; }
+  .sort-card, .ds-card, .q-item { break-inside: avoid; box-shadow: none !important; }
+  body { font-size: 12px; }
+  .hero { padding: 1.5rem 0 1rem; }
+  .hero-bg, .hero-glow { display: none; }
+  .cheat-container { background: #f8fafc !important; color: #000 !important; border: 1px solid #000 !important; }
+  .cheat-block { background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
+  .cheat-block-title, .cheat-row .ck { color: #374151 !important; }
+  .cheat-row .cv { color: #1d4ed8 !important; }
+  h2 { page-break-after: avoid; }
+  .section-wrap { page-break-before: auto; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate { animation: fadeInUp .4s ease forwards; }
+@media (prefers-reduced-motion: reduce) { .animate { animation: none; } }
+
+/* misc utils */
+.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+.mt1 { margin-top: .5rem; }
+.mt2 { margin-top: 1rem; }
+.mt3 { margin-top: 1.5rem; }
+.mb1 { margin-bottom: .5rem; }
+.mb2 { margin-bottom: 1rem; }
+.tag-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HEADER ═══ -->
+<header class="site-header" role="banner">
+  <div class="logo">
+    <span class="logo-badge">DSA</span>
+    دليل الامتحان الشامل
+  </div>
+  <nav class="header-nav">
+    <button class="nav-link" onclick="scrollTo('#sorting')">الترتيب</button>
+    <button class="nav-link" onclick="scrollTo('#datastructs')">هياكل البيانات</button>
+    <button class="nav-link" onclick="scrollTo('#survival')">دليل النجاة</button>
+    <button class="nav-link" onclick="scrollTo('#questions')">أسئلة الامتحان</button>
+    <button class="nav-link" onclick="scrollTo('#cheatsheet')">Cheat Sheet</button>
+    <button class="dark-toggle" id="darkToggle" title="تبديل الوضع المظلم">🌙</button>
+  </nav>
+</header>
+
+<main class="main-content">
+
+<!-- ═══════════════════════════════════════════ HERO ════ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="container hero-content animate">
+    <div class="hero-eyebrow">📚 دليل الاستعداد للامتحان</div>
+    <h1>هياكل البيانات<br>و<span class="accent">الخوارزميات</span></h1>
+    <p class="hero-sub">كل ما تحتاجه قبل الامتحان: خوارزميات الترتيب، هياكل البيانات، أسئلة نموذجية، وورقة مرجع سريع — كل شيء بالعربية.</p>
+    <div class="hero-badges">
+      <span class="hbadge blue">⚡ خوارزميات الترتيب</span>
+      <span class="hbadge violet">🌲 الأشجار و الـ Heap</span>
+      <span class="hbadge emerald">🔍 DFS & BFS</span>
+      <span class="hbadge amber">🗂️ Hash Tables</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════ PART 1: SORTING ════ -->
+<section class="section-wrap" id="sorting">
+  <div class="section-eyebrow">الجزء الأول</div>
+  <h2 class="section-title">خوارزميات الترتيب</h2>
+  <p class="section-sub">من أبسط الخوارزميات حتى Divide & Conquer — مع تتبع يدوي لكل خطوة</p>
+
+  <!-- ── Basic Sorts ── -->
+  <h3 style="margin-bottom:.85rem">الترتيب الأساسي (O(n²))</h3>
+  <div class="sort-grid">
+
+    <!-- Bubble Sort -->
+    <div class="sort-card">
+      <div class="sort-header">
+        <div class="sort-icon blue">🫧</div>
+        <div>
+          <div class="sort-name">Bubble Sort</div>
+          <div class="sort-type">ترتيب الفقاعات</div>
+        </div>
+      </div>
+      <div class="sort-body">
+        <p><strong>التعريف:</strong> يمر على القائمة مراراً، يقارن العناصر المجاورة ويبدّلها إذا كانت في الترتيب الخاطئ.</p>
+        <div class="callout blue">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <div class="callout-title">الحدس</div>
+            <p>أكبر عنصر "يفقع" ويطفو للنهاية في كل تمرير — مثل فقاعة تصعد في الماء.</p>
+          </div>
+        </div>
+        <p><strong>المنطق:</strong> حلقتان متداخلتان. الداخلية تقارن <code>arr[j]</code> مع <code>arr[j+1]</code> وتستخدم متغير <code>temp</code> للتبديل.</p>
+        <div class="trace-box">
+          <div class="trace-title">📋 تتبع يدوي: [5, 3, 1, 4]</div>
+          <div class="trace-row">
+            <div class="trace-label">مبدئي</div>
+            <div class="trace-arr">
+              <div class="ta">5</div><div class="ta">3</div><div class="ta">1</div><div class="ta">4</div>
+            </div>
+          </div>
+          <div class="trace-row">
+            <div class="trace-label">تمرير 1</div>
+            <div class="trace-arr">
+              <div class="ta">3</div><div class="ta">1</div><div class="ta">4</div><div class="ta done">5</div>
+            </div>
+          </div>
+          <div class="trace-row">
+            <div class="trace-label">تمرير 2</div>
+            <div class="trace-arr">
+              <div class="ta">1</div><div class="ta">3</div><div class="ta done">4</div><div class="ta done">5</div>
+            </div>
+          </div>
+          <div class="trace-row">
+            <div class="trace-label">النتيجة</div>
+            <div class="trace-arr">
+              <div class="ta done">1</div><div class="ta done">3</div><div class="ta done">4</div><div class="ta done">5</div>
+            </div>
+          </div>
+        </div>
+        <div class="complexity-row">
+          <span class="cx-badge time">⏱ O(n²)</span>
+          <span class="cx-badge space">📦 O(1)</span>
+          <span class="cx-badge stable">✓ Stable</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selection Sort -->
+    <div class="sort-card">
+      <div class="sort-header">
+        <div class="sort-icon emerald">🎯</div>
+        <div>
+          <div class="sort-name">Selection Sort</div>
+          <div class="sort-type">ترتيب الاختيار</div>
+        </div>
+      </div>
+      <div class="sort-body">
+        <p><strong>التعريف:</strong> يقسّم القائمة إلى جزء مرتّب وغير مرتّب، يختار أصغر عنصر من الجزء غير المرتّب ويضعه في مكانه الصحيح.</p>
+        <div class="callout emerald">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <div class="callout-title">الحدس</div>
+            <p>تختار المرشح الأدنى من الباقي في كل جولة وتضعه في مكانه — مثل ترتيب أوراق من الأصغر للأكبر يدوياً.</p>
+          </div>
+        </div>
+        <p><strong>المنطق:</strong> يجد <code>minIndex</code> في القسم غير المرتّب ويبدّله مع عنصر الحدّ الحالي <code>i</code>.</p>
+        <div class="trace-box">
+          <div class="trace-title">📋 تتبع يدوي: [4, 2, 5, 1]</div>
+          <div class="trace-row"><div class="trace-label">i=0 (min=1)</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta">2</div><div class="ta">5</div><div class="ta">4</div></div>
+          </div>
+          <div class="trace-row"><div class="trace-label">i=1 (min=2)</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta done">2</div><div class="ta">5</div><div class="ta">4</div></div>
+          </div>
+          <div class="trace-row"><div class="trace-label">i=2 (min=4)</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta done">2</div><div class="ta done">4</div><div class="ta done">5</div></div>
+          </div>
+        </div>
+        <div class="complexity-row">
+          <span class="cx-badge time">⏱ O(n²)</span>
+          <span class="cx-badge space">📦 O(1)</span>
+          <span class="cx-badge unstable">✗ Unstable</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insertion Sort -->
+    <div class="sort-card">
+      <div class="sort-header">
+        <div class="sort-icon violet">🃏</div>
+        <div>
+          <div class="sort-name">Insertion Sort</div>
+          <div class="sort-type">ترتيب الإدراج</div>
+        </div>
+      </div>
+      <div class="sort-body">
+        <p><strong>التعريف:</strong> يبني المصفوفة المرتّبة عنصراً بعنصر — يأخذ كل عنصر ويُدرجه في موضعه الصحيح بين العناصر السابقة.</p>
+        <div class="callout violet">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <div class="callout-title">الحدس</div>
+            <p>مثل ترتيب ورق اللعب في يدك — تأخذ ورقة جديدة وتضعها في مكانها الصحيح بين الأوراق المرتّبة.</p>
+          </div>
+        </div>
+        <p><strong>المنطق:</strong> <code>key</code> يُقارن مع العناصر على يساره. العناصر الأكبر تُزاح يميناً لإفساح "فجوة" لوضع الـ key فيها.</p>
+        <div class="trace-box">
+          <div class="trace-title">📋 تتبع يدوي: [3, 1, 4, 2]</div>
+          <div class="trace-row"><div class="trace-label">key=1</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta done">3</div><div class="ta">4</div><div class="ta">2</div></div>
+          </div>
+          <div class="trace-row"><div class="trace-label">key=4</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta done">3</div><div class="ta done">4</div><div class="ta">2</div></div>
+          </div>
+          <div class="trace-row"><div class="trace-label">key=2</div>
+            <div class="trace-arr"><div class="ta done">1</div><div class="ta done">2</div><div class="ta done">3</div><div class="ta done">4</div></div>
+          </div>
+        </div>
+        <div class="complexity-row">
+          <span class="cx-badge time">⏱ O(n²)</span>
+          <span class="cx-badge space">📦 O(1)</span>
+          <span class="cx-badge stable">✓ Stable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Advanced Sorts ── -->
+  <h3 style="margin:2rem 0 .85rem">الترتيب المتقدم — Divide & Conquer 🔥</h3>
+  <div class="sort-grid">
+
+    <!-- Merge Sort -->
+    <div class="sort-card">
+      <div class="sort-header">
+        <div class="sort-icon amber">⚡</div>
+        <div>
+          <div class="sort-name">Merge Sort</div>
+          <div class="sort-type">ترتيب الدمج</div>
+        </div>
+      </div>
+      <div class="sort-body">
+        <p><strong>التعريف:</strong> خوارزمية تعاودية (Recursive) تقسّم المصفوفة لنصفين، تُرتّب كلاً منهما ثم تدمجهما.</p>
+        <div class="callout amber">
+          <div class="callout-icon">📐</div>
+          <div class="callout-body">
+            <div class="callout-title">المعادلة الأساسية</div>
+            <p><code>mid = (left + right) / 2</code></p>
+          </div>
+        </div>
+        <p><strong>منطق الدمج (merge):</strong> ينشئ مصفوفتين مؤقتتين L وR، يقارن رأسيهما ويضع الأصغر في المصفوفة الأصلية.</p>
+        <div class="trace-box">
+          <div class="trace-title">📋 الانقسام: [3,1,4,2]</div>
+          <div class="trace-row"><div class="trace-label">تقسيم</div>
+            <div class="trace-arr">
+              <div class="ta hl">3</div><div class="ta hl">1</div>
+              <span style="margin:0 4px;color:var(--text3);font-size:.8rem">|</span>
+              <div class="ta">4</div><div class="ta">2</div>
+            </div>
+          </div>
+          <div class="trace-row"><div class="trace-label">تقسيم</div>
+            <div class="trace-arr">
+              <div class="ta hl">3</div><div class="ta hl">1</div>
+              <span style="margin:0 4px;color:var(--text3);font-size:.8rem">|</span>
+              <div class="ta">4</div><div class="ta">2</div>
+            </div>
+          </div>
+          <div class="trace-row"><div class="trace-label">دمج</div>
+            <div class="trace-arr">
+              <div class="ta done">1</div><div class="ta done">3</div>
+              <span style="margin:0 4px;color:var(--text3);font-size:.8rem">|</span>
+              <div class="ta done">2</div><div class="ta done">4</div>
+            </div>
+          </div>
+          <div class="trace-row"><div class="trace-label">النتيجة</div>
+            <div class="trace-arr">
+              <div class="ta done">1</div><div class="ta done">2</div><div class="ta done">3</div><div class="ta done">4</div>
+            </div>
+          </div>
+        </div>
+        <div class="complexity-row">
+          <span class="cx-badge time">⏱ O(n log n)</span>
+          <span class="cx-badge space">📦 O(n)</span>
+          <span class="cx-badge stable">✓ Stable</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Sort -->
+    <div class="sort-card">
+      <div class="sort-header">
+        <div class="sort-icon red">🚀</div>
+        <div>
+          <div class="sort-name">Quick Sort</div>
+          <div class="sort-type">الترتيب السريع</div>
+        </div>
+      </div>
+      <div class="sort-body">
+        <p><strong>التعريف:</strong> يختار عنصراً "محورياً" (Pivot) ويُعيد ترتيب المصفوفة حوله.</p>
+        <div class="callout blue">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <div class="callout-title">الحدس</div>
+            <p>بعد كل استدعاء لـ Partition، الـ Pivot يكون في موضعه النهائي — كل ما على يساره أصغر، وما على يمينه أكبر.</p>
+          </div>
+        </div>
+        <p><strong>طريقة Hoare:</strong> مؤشر L يتحرك حتى يجد عنصراً <code>&gt; pivot</code>، ومؤشر R يتحرك حتى يجد <code>&lt;= pivot</code> ثم يُبدّلان.</p>
+        <div class="trace-box">
+          <div class="trace-title">📋 مثال: [3,6,1,8,2] — Pivot=3</div>
+          <div class="trace-row"><div class="trace-label">Pivot</div>
+            <div class="trace-arr">
+              <div class="ta pivot">3</div><div class="ta">6</div><div class="ta">1</div><div class="ta">8</div><div class="ta">2</div>
+            </div>
+          </div>
+          <div class="trace-row"><div class="trace-label">بعد Partition</div>
+            <div class="trace-arr">
+              <div class="ta">2</div><div class="ta">1</div><div class="ta done pivot">3</div><div class="ta">8</div><div class="ta">6</div>
+            </div>
+          </div>
+          <div style="font-size:.8rem;color:var(--text3);margin-top:.4rem">✓ 3 في موضعه النهائي — اليسار أصغر، اليمين أكبر</div>
+        </div>
+        <div class="complexity-row">
+          <span class="cx-badge time">⏱ O(n log n) avg</span>
+          <span class="cx-badge space">📦 O(log n)</span>
+          <span class="cx-badge unstable">✗ Unstable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Non-Comparison Sorts ── -->
+  <h3 style="margin:2rem 0 .85rem">الترتيب غير المقارن</h3>
+  <div class="two-col">
+    <div class="lcard blue">
+      <h4>Counting Sort</h4>
+      <p><strong>التعريف:</strong> لا يقارن العناصر — يعدّ تكرارات كل رقم ويستخدم التراكم لتحديد المواضع.</p>
+      <p><strong>الخطوات:</strong></p>
+      <ol style="margin-right:1rem;margin-bottom:.6rem">
+        <li>ابحث عن <code>maxVal</code></li>
+        <li>أنشئ مصفوفة count بحجم <code>maxVal + 1</code></li>
+        <li>عُدّ تكرار كل رقم</li>
+        <li>حوّل إلى تراكمي (Cumulative)</li>
+        <li>ضع العناصر في مصفوفة output بالترتيب العكسي</li>
+      </ol>
+      <div class="callout emerald" style="margin:0">
+        <div class="callout-icon">📌</div>
+        <div class="callout-body"><div class="callout-title">نقطة امتحانية</div>
+          <p>Counting Sort هو <strong>Stable</strong> إذا مررنا على المصفوفة الأصلية من اليمين للشمال عند وضع العناصر.</p>
+        </div>
+      </div>
+    </div>
+    <div class="lcard violet">
+      <h4>Radix Sort</h4>
+      <p><strong>التعريف:</strong> يرتّب الأرقام رقماً رقماً من الأقل أهمية (LSD) للأكثر أهمية (MSD).</p>
+      <p><strong>العلاقة:</strong> يستخدم Counting Sort كخوارزمية فرعية لكل خانة (آحاد → عشرات → مئات...).</p>
+      <div class="trace-box mt2">
+        <div class="trace-title">مثال: [170, 45, 75, 90, 802]</div>
+        <div style="font-size:.83rem;color:var(--text2)">
+          <div>آحاد:  [170, 90, 802, 45, 75]</div>
+          <div>عشرات: [802, 45, 170, 75, 90]</div>
+          <div>مئات:  [45, 75, 90, 170, 802] ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Searching ── -->
+  <h3 style="margin:2rem 0 .85rem">خوارزميات البحث</h3>
+  <div class="two-col">
+    <div class="lcard amber">
+      <h4>Linear Search — البحث الخطي</h4>
+      <p>يفحص كل عنصر بالتسلسل حتى يجد المطلوب أو ينتهي القائمة.</p>
+      <div class="formula-box">
+        <div class="fl">if (arr[i] == target)</div>
+        <div class="fr">  return i;   // وجدناه</div>
+        <div class="fl">return -1;    // لم يوجد</div>
+      </div>
+      <span class="cx-badge time" style="font-size:.75rem">O(n)</span>
+    </div>
+    <div class="lcard blue">
+      <h4>Binary Search — البحث الثنائي</h4>
+      <p>للمصفوفات <strong>المرتّبة فقط</strong> — يُقسّم فضاء البحث للنصف في كل خطوة.</p>
+      <div class="callout amber" style="margin:.5rem 0">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body"><div class="callout-title">شرط مسبق مهم</div>
+          <p>المصفوفة يجب أن تكون <strong>مرتّبة</strong> قبل تطبيق Binary Search — فخ امتحاني شائع!</p>
+        </div>
+      </div>
+      <div class="formula-box">
+        <div class="fl">mid = (low + high) / 2</div>
+        <div class="fr">// إذا target &lt; arr[mid] → ابحث يساراً</div>
+        <div class="fr">// إذا target &gt; arr[mid] → ابحث يميناً</div>
+      </div>
+      <span class="cx-badge time" style="font-size:.75rem">O(log n)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PART 2: DATA STRUCTURES ════ -->
+<section class="section-wrap" id="datastructs">
+  <div class="section-eyebrow">الجزء الثاني</div>
+  <h2 class="section-title">لوحة هياكل البيانات</h2>
+  <p class="section-sub">ابحث عن أي هيكل بيانات أو خوارزمية بالاسم</p>
+
+  <div class="search-bar-wrap">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="dsaSearch" placeholder="ابحث: Hash, Queue, Tree, Graph..." oninput="filterDS(this.value)" />
+  </div>
+
+  <div class="ds-grid" id="dsGrid">
+
+    <!-- Hash Tables -->
+    <div class="ds-card" data-name="hash table تجزئة hashing">
+      <div class="ds-head">
+        <div class="ds-chip amber">Hash Table</div>
+        <div class="ds-name">جدول التجزئة</div>
+      </div>
+      <div class="ds-body">
+        <p><strong>التعريف:</strong> هيكل يربط مفاتيح (Keys) بقيم (Values) عبر دالة تجزئة (Hash Function) تحسب فهرساً في مصفوفة.</p>
+        <div class="formula-label">دالة التجزئة — Division Method</div>
+        <div class="formula-box"><span class="fl">index</span> = <span class="fr">key % size</span></div>
+        <div class="formula-label">تجزئة النصوص</div>
+        <div class="formula-box"><span class="fl">index</span> = <span class="fr">(sum of ASCII values) % size</span></div>
+        <p><strong>معالجة التصادم:</strong></p>
+        <ul>
+          <li><strong>Chaining:</strong> كل خلية تحوي Linked List — عناصر متعددة في نفس الفهرس تُضاف للقائمة</li>
+          <li><strong>Linear Probing:</strong> إذا الخلية محجوزة، ابحث عن التالية: <code>(index + 1) % size</code></li>
+        </ul>
+        <div class="callout amber mt1">
+          <div class="callout-icon">📋</div>
+          <div class="callout-body"><div class="callout-title">مثال امتحاني — Chaining</div>
+            <p>أدرج [15, 25, 35] في جدول حجم 10:<br>
+            15 % 10 = <strong>5</strong> | 25 % 10 = <strong>5</strong> (→ في نفس القائمة) | 35 % 10 = <strong>5</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Queues -->
+    <div class="ds-card" data-name="queue طابور fifo">
+      <div class="ds-head">
+        <div class="ds-chip blue">Queue</div>
+        <div class="ds-name">الطابور (Queue)</div>
+      </div>
+      <div class="ds-body">
+        <p><strong>التعريف:</strong> هيكل خطي — الإدراج من الخلف (rear) والحذف من الأمام (front).</p>
+        <div class="callout blue" style="margin:.5rem 0">
+          <div class="callout-icon">🔑</div>
+          <div class="callout-body"><div class="callout-title">المبدأ الأساسي</div>
+            <p><strong>FIFO</strong> — First In, First Out: أول من يدخل أول من يخرج</p>
+          </div>
+        </div>
+        <p><strong>العمليات الأساسية:</strong></p>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>العملية</th><th>الوظيفة</th></tr>
+            <tr><td><code>push() / enqueue()</code></td><td>إضافة للخلف</td></tr>
+            <tr><td><code>pop() / dequeue()</code></td><td>حذف من الأمام</td></tr>
+            <tr><td><code>front()</code></td><td>عرض العنصر الأول</td></tr>
+            <tr><td><code>size()</code></td><td>عدد العناصر</td></tr>
+          </table>
+        </div>
+        <div class="formula-label">التنفيذ بالمصفوفة</div>
+        <div class="formula-box">
+          <span class="fl">front = rear = -1</span> (تهيئة)<br>
+          <span class="fr">ممتلئ إذا: rear == SIZE - 1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BST -->
+    <div class="ds-card" data-name="bst binary search tree شجرة ثنائية">
+      <div class="ds-head">
+        <div class="ds-chip emerald">BST</div>
+        <div class="ds-name">شجرة البحث الثنائية</div>
+      </div>
+      <div class="ds-body">
+        <p><strong>التعريف:</strong> هيكل شجري — اليسار يحوي مفاتيح <strong>أصغر</strong>، اليمين يحوي مفاتيح <strong>أكبر</strong>.</p>
+        <p><strong>بنية العقدة:</strong> بيانات + مؤشر يسار + مؤشر يمين</p>
+
+        <!-- BST Visual -->
+        <div class="diagram-scroll">
+          <svg viewBox="0 0 280 160" width="280" height="160" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace;display:block;margin:.75rem auto">
+            <!-- edges -->
+            <line x1="140" y1="35" x2="80"  y2="85" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="140" y1="35" x2="200" y2="85" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="80"  y1="85" x2="50"  y2="135" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="80"  y1="85" x2="110" y2="135" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="200" y1="85" x2="230" y2="135" stroke="#cbd5e1" stroke-width="1.5"/>
+            <!-- nodes -->
+            <circle cx="140" cy="30" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+            <text x="140" y="35" text-anchor="middle" fill="#1d4ed8" font-size="14" font-weight="700">8</text>
+            <circle cx="80"  cy="80" r="20" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="80"  y="85" text-anchor="middle" fill="#6d28d9" font-size="13">4</text>
+            <circle cx="200" cy="80" r="20" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="200" y="85" text-anchor="middle" fill="#6d28d9" font-size="13">12</text>
+            <circle cx="50"  cy="130" r="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="50"  y="135" text-anchor="middle" fill="#64748b" font-size="12">2</text>
+            <circle cx="110" cy="130" r="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="110" y="135" text-anchor="middle" fill="#64748b" font-size="12">6</text>
+            <circle cx="230" cy="130" r="18" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="230" y="135" text-anchor="middle" fill="#64748b" font-size="12">15</text>
+            <!-- labels -->
+            <text x="140" y="158" text-anchor="middle" fill="#94a3b8" font-size="9">Inorder: 2,4,6,8,12,15 ✓ مرتّب</text>
+          </svg>
+        </div>
+
+        <div class="callout emerald">
+          <div class="callout-icon">⭐</div>
+          <div class="callout-body"><div class="callout-title">نقطة امتحانية مضمونة</div>
+            <p>Inorder Traversal (يسار ← جذر ← يمين) دائماً يعطي العناصر <strong>بترتيب تصاعدي</strong>.</p>
+          </div>
+        </div>
+
+        <p style="margin-top:.6rem"><strong>أنواع المرور (Traversal):</strong></p>
+        <ul>
+          <li><strong>Inorder:</strong> Left → Root → Right</li>
+          <li><strong>Preorder:</strong> Root → Left → Right</li>
+          <li><strong>Postorder:</strong> Left → Right → Root</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Heaps -->
+    <div class="ds-card" data-name="heap max min priority queue">
+      <div class="ds-head">
+        <div class="ds-chip cyan">Heap</div>
+        <div class="ds-name">الكومة (Heap)</div>
+      </div>
+      <div class="ds-body">
+        <p><strong>Max Heap:</strong> الجذر = الأكبر — كل أب أكبر من أبنائه.</p>
+        <p><strong>Min Heap:</strong> الجذر = الأصغر — كل أب أصغر من أبنائه.</p>
+
+        <!-- Heap Visual -->
+        <div class="diagram-scroll">
+          <svg viewBox="0 0 260 140" width="260" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace;display:block;margin:.5rem auto">
+            <line x1="130" y1="28" x2="75"  y2="75" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="130" y1="28" x2="185" y2="75" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="75"  y1="75" x2="45"  y2="120" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="75"  y1="75" x2="105" y2="120" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="185" y1="75" x2="155" y2="120" stroke="#cbd5e1" stroke-width="1.5"/>
+            <line x1="185" y1="75" x2="215" y2="120" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="130" cy="25" r="20" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+            <text x="130" y="30" text-anchor="middle" fill="#0e7490" font-size="13" font-weight="700">90</text>
+            <circle cx="75"  cy="72" r="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="75"  y="77" text-anchor="middle" fill="#6d28d9" font-size="12">75</text>
+            <circle cx="185" cy="72" r="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="185" y="77" text-anchor="middle" fill="#6d28d9" font-size="12">80</text>
+            <circle cx="45"  cy="117" r="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="45"  y="122" text-anchor="middle" fill="#64748b" font-size="11">30</text>
+            <circle cx="105" cy="117" r="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="105" y="122" text-anchor="middle" fill="#64748b" font-size="11">60</text>
+            <circle cx="155" cy="117" r="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="155" y="122" text-anchor="middle" fill="#64748b" font-size="11">50</text>
+            <circle cx="215" cy="117" r="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="215" y="122" text-anchor="middle" fill="#64748b" font-size="11">20</text>
+            <text x="130" y="140" text-anchor="middle" fill="#0891b2" font-size="8">Max Heap — الجذر=90 الأكبر</text>
+          </svg>
+        </div>
+
+        <div class="formula-label">تمثيل الـ Heap بالمصفوفة</div>
+        <div class="formula-box">
+          <div><span class="fl">Left Child</span>  = <span class="fr">2 * index + 1</span></div>
+          <div><span class="fl">Right Child</span> = <span class="fr">2 * index + 2</span></div>
+          <div><span class="fl">Parent</span>      = <span class="fr">(index - 1) / 2</span></div>
+        </div>
+        <div class="callout cyan">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body"><div class="callout-title">الحدس</div>
+            <p>إضافة عنصر → ضعه في النهاية وـ"ارفعه" (Swap Up). حذف الجذر → استبدله بالأخير وـ"أنزله" (Swap Down).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphs -->
+    <div class="ds-card" data-name="graph dfs bfs رسم بياني">
+      <div class="ds-head">
+        <div class="ds-chip violet">Graph</div>
+        <div class="ds-name">الرسم البياني (Graph)</div>
+      </div>
+      <div class="ds-body">
+        <p><strong>التعريف:</strong> مجموعة عقد (Vertices) مرتبطة بحواف (Edges).</p>
+        <p><strong>التمثيل:</strong> قائمة الجوار (Adjacency List) — <code>vector&lt;vector&lt;int&gt;&gt;</code> — كل فهرس يحوي قائمة جيرانه.</p>
+
+        <div class="traversal-grid">
+          <div class="trav-card">
+            <div class="trav-title">🔵 DFS — Depth First Search</div>
+            <p style="font-size:.88rem;color:var(--text2)">يستكشف بعمق — يذهب لأبعد نقطة قبل الرجوع (Backtracking).</p>
+            <p style="font-size:.88rem;color:var(--text2);margin-top:.35rem"><strong>المسار:</strong> 1 → 2 → 4 → 5 → 3</p>
+            <div class="trav-uses">
+              <span style="font-size:.8rem;color:var(--text3)">يستخدم:</span>
+              <span class="trav-pill stack">Stack</span>
+            </div>
+          </div>
+          <div class="trav-card">
+            <div class="trav-title">🟢 BFS — Breadth First Search</div>
+            <p style="font-size:.88rem;color:var(--text2)">يستكشف بعرض — يزور كل جيران المستوى الحالي قبل الانتقال.</p>
+            <p style="font-size:.88rem;color:var(--text2);margin-top:.35rem"><strong>المسار:</strong> 1 → 2 → 3 → 4 → 5</p>
+            <div class="trav-uses">
+              <span style="font-size:.8rem;color:var(--text3)">يستخدم:</span>
+              <span class="trav-pill queue">Queue</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout violet mt1">
+          <div class="callout-icon">📌</div>
+          <div class="callout-body"><div class="callout-title">نقطة مضمونة</div>
+            <p>DFS → Stack | BFS → Queue — هذا الفرق يظهر في كل امتحان.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ds-grid -->
+</section>
+
+<!-- ═══════════════════════════════════════════ PART 3: SURVIVAL ════ -->
+<section class="section-wrap" id="survival">
+  <div class="section-eyebrow">الجزء الثالث</div>
+  <h2 class="section-title">دليل النجاة</h2>
+  <p class="section-sub">أخطاء يقع فيها الطلاب دائماً + تقييم أهمية المواضيع</p>
+
+  <h3 style="margin-bottom:.85rem">الأخطاء الأكثر شيوعاً</h3>
+  <div class="mistake-grid">
+    <div class="mistake-card">
+      <div class="mistake-icon">💥</div>
+      <div class="mistake-title">Queue Overflow / Underflow</div>
+      <div class="mistake-text">محاولة pop() من طابور فارغ أو push() لطابور ممتلئ بدون التحقق من <code>empty()</code> أو <code>size()</code>.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-icon">🔍</div>
+      <div class="mistake-title">شرط Binary Search المنسي</div>
+      <div class="mistake-text">البحث الثنائي يشترط أن تكون المصفوفة <strong>مرتّبة</strong> مسبقاً — بدونه النتيجة خاطئة تماماً.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-icon">📊</div>
+      <div class="mistake-title">فهرسة الـ Heap</div>
+      <div class="mistake-text">الخلط بين المعادلات: ابن يسار = <code>2i+1</code>، ابن يمين = <code>2i+2</code>، الأب = <code>(i-1)/2</code>.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-icon">🌲</div>
+      <div class="mistake-title">خلط Traversals في BST</div>
+      <div class="mistake-text">الخلط بين Inorder (L-Root-R) وPreorder (Root-L-R) وPostorder (L-R-Root). <strong>Inorder = مرتّب دائماً.</strong></div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-icon">🗂️</div>
+      <div class="mistake-title">نسيان % في Hash</div>
+      <div class="mistake-text">دالة التجزئة <strong>يجب</strong> أن تنتهي بـ <code>% size</code> وإلا الفهرس خارج نطاق المصفوفة.</div>
+    </div>
+    <div class="mistake-card">
+      <div class="mistake-icon">🚀</div>
+      <div class="mistake-title">Quick Sort Pivot غير محدد</div>
+      <div class="mistake-text">إذا لم يُذكر Pivot، يُفترض عادةً أنه <strong>العنصر الأول أو الأوسط</strong> — وضّح في الإجابة أيهما تستخدم.</div>
+    </div>
+  </div>
+
+  <!-- Priority Ranking -->
+  <h3 style="margin:2rem 0 .85rem">🏆 تقييم أهمية المواضيع في الامتحان</h3>
+  <div class="card" style="padding:1.25rem 1.5rem">
+    <div class="priority-list">
+      <div class="priority-item">
+        <div class="priority-label">Divide & Conquer (Quick/Merge)</div>
+        <div class="priority-track"><div class="priority-fill" style="width:98%;background:#2563eb"></div></div>
+        <div class="priority-num">🔥🔥🔥</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-label">Heaps (Max/Min + Array Index)</div>
+        <div class="priority-track"><div class="priority-fill" style="width:90%;background:#0891b2"></div></div>
+        <div class="priority-num">🔥🔥</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-label">Graph Traversals (DFS / BFS)</div>
+        <div class="priority-track"><div class="priority-fill" style="width:85%;background:#7c3aed"></div></div>
+        <div class="priority-num">🔥🔥</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-label">Hash Table Collisions</div>
+        <div class="priority-track"><div class="priority-fill" style="width:78%;background:#d97706"></div></div>
+        <div class="priority-num">🔥</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-label">BST Operations (Insert/Search)</div>
+        <div class="priority-track"><div class="priority-fill" style="width:70%;background:#059669"></div></div>
+        <div class="priority-num">🔥</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-label">Basic Sorts (Bubble/Selection/Insertion)</div>
+        <div class="priority-track"><div class="priority-fill" style="width:60%;background:#64748b"></div></div>
+        <div class="priority-num">📌</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PART 4: QUESTIONS ════ -->
+<section class="section-wrap" id="questions">
+  <div class="section-eyebrow">الجزء الرابع</div>
+  <h2 class="section-title">30 سؤالاً امتحانياً محتملاً</h2>
+  <p class="section-sub">اضغط على السؤال لرؤية الإجابة النموذجية — معظمها تتبع يدوي أو منطق</p>
+
+  <div class="questions-grid">
+
+    <!-- Q1 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">01</div>
+        <div class="q-text">تتبع Bubble Sort يدوياً على المصفوفة [5, 3, 8, 1, 4] — أظهر كل تمرير</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <div class="trace-box">
+          <div class="trace-row"><div class="trace-label">مبدئي</div><div class="trace-arr"><div class="ta">5</div><div class="ta">3</div><div class="ta">8</div><div class="ta">1</div><div class="ta">4</div></div></div>
+          <div class="trace-row"><div class="trace-label">تمرير 1</div><div class="trace-arr"><div class="ta">3</div><div class="ta">5</div><div class="ta">1</div><div class="ta">4</div><div class="ta done">8</div></div></div>
+          <div class="trace-row"><div class="trace-label">تمرير 2</div><div class="trace-arr"><div class="ta">3</div><div class="ta">1</div><div class="ta">4</div><div class="ta done">5</div><div class="ta done">8</div></div></div>
+          <div class="trace-row"><div class="trace-label">تمرير 3</div><div class="trace-arr"><div class="ta">1</div><div class="ta">3</div><div class="ta done">4</div><div class="ta done">5</div><div class="ta done">8</div></div></div>
+          <div class="trace-row"><div class="trace-label">تمرير 4</div><div class="trace-arr"><div class="ta done">1</div><div class="ta done">3</div><div class="ta done">4</div><div class="ta done">5</div><div class="ta done">8</div></div></div>
+        </div>
+        <p>في كل تمرير: أكبر عنصر "يطفو" لنهاية القسم غير المرتّب. عدد التمريرات = n-1 = 4.</p>
+      </div></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">02</div>
+        <div class="q-text">ما الفرق بين Bubble Sort و Selection Sort من حيث عدد عمليات التبديل (Swaps)؟</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Bubble Sort:</strong> يُبدّل في كل خطوة مقارنة — قد يُجري O(n²) تبديلاً.</p>
+        <p><strong>Selection Sort:</strong> يُبدّل مرة واحدة فقط لكل جولة (بعد إيجاد minIndex) — O(n) تبديل فقط.</p>
+        <p>لهذا Selection Sort أفضل من حيث عدد التبديلات رغم تساويهما في التعقيد الزمني O(n²).</p>
+      </div></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">03</div>
+        <div class="q-text">تتبع Insertion Sort يدوياً على [7, 2, 5, 1, 6]</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <div class="trace-box">
+          <div class="trace-row"><div class="trace-label">key=2</div><div class="trace-arr"><div class="ta done">2</div><div class="ta done">7</div><div class="ta">5</div><div class="ta">1</div><div class="ta">6</div></div></div>
+          <div class="trace-row"><div class="trace-label">key=5</div><div class="trace-arr"><div class="ta done">2</div><div class="ta done">5</div><div class="ta done">7</div><div class="ta">1</div><div class="ta">6</div></div></div>
+          <div class="trace-row"><div class="trace-label">key=1</div><div class="trace-arr"><div class="ta done">1</div><div class="ta done">2</div><div class="ta done">5</div><div class="ta done">7</div><div class="ta">6</div></div></div>
+          <div class="trace-row"><div class="trace-label">key=6</div><div class="trace-arr"><div class="ta done">1</div><div class="ta done">2</div><div class="ta done">5</div><div class="ta done">6</div><div class="ta done">7</div></div></div>
+        </div>
+        <p>عند key=1: يزيح 7 ثم 5 ثم 2 ثم يضع 1 في المكان الفارغ. المنطق: الإزاحة يميناً وليس التبديل.</p>
+      </div></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">04</div>
+        <div class="q-text">ما معادلة إيجاد منتصف المصفوفة في Merge Sort؟ لماذا تستخدمها؟</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>المعادلة:</strong> <code>mid = (left + right) / 2</code></p>
+        <p>نستخدمها لتقسيم المصفوفة لنصفين في كل مستوى من مستويات التعاود (Recursion). هذا هو جوهر مبدأ Divide & Conquer.</p>
+        <p><strong>مثال:</strong> على مصفوفة [0..7]: <code>mid = (0+7)/2 = 3</code> → تقسم لـ [0..3] و [4..7]</p>
+      </div></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">05</div>
+        <div class="q-text">تتبع Quick Sort على [3, 6, 1, 8, 2] باستخدام الأول pivot</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Pivot = 3 (العنصر الأول)</strong></p>
+        <div class="trace-box">
+          <div class="trace-row"><div class="trace-label">Pivot=3</div><div class="trace-arr"><div class="ta pivot">3</div><div class="ta">6</div><div class="ta">1</div><div class="ta">8</div><div class="ta">2</div></div></div>
+          <div class="trace-row"><div class="trace-label">L=6&gt;3, R=2≤3 → Swap</div><div class="trace-arr"><div class="ta pivot">3</div><div class="ta swp">2</div><div class="ta">1</div><div class="ta">8</div><div class="ta swp">6</div></div></div>
+          <div class="trace-row"><div class="trace-label">L=8&gt;3, R=1≤3 → L&gt;R → ضع Pivot</div><div class="trace-arr"><div class="ta">2</div><div class="ta">1</div><div class="ta done pivot">3</div><div class="ta">8</div><div class="ta">6</div></div></div>
+        </div>
+        <p>3 في موضعه النهائي. الآن Quick Sort يُطبَّق تعاودياً على [2,1] و [8,6].</p>
+      </div></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">06</div>
+        <div class="q-text">ما تعقيد Merge Sort الزمني؟ ولماذا هو O(n log n)؟</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>التعقيد: O(n log n)</strong> في جميع الحالات (أفضل، متوسط، أسوأ).</p>
+        <p><strong>السبب:</strong> log n مستويات من التقسيم (لأننا نقسم للنصف في كل مرة) × O(n) عمل في كل مستوى للدمج = O(n log n).</p>
+        <p><strong>المساحة:</strong> O(n) — يحتاج مصفوفات مؤقتة (L وR) لعملية الدمج.</p>
+      </div></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">07</div>
+        <div class="q-text">أدرج [15, 25, 35, 5, 45] في Hash Table بحجم 10 باستخدام Division Method مع Chaining</div>
+        <span class="q-tag hash">Hash</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>الحسابات:</strong></p>
+        <ul>
+          <li>15 % 10 = <strong>5</strong> → الخلية 5: [15]</li>
+          <li>25 % 10 = <strong>5</strong> → الخلية 5: [15, 25] (Chaining)</li>
+          <li>35 % 10 = <strong>5</strong> → الخلية 5: [15, 25, 35]</li>
+          <li>5 % 10  = <strong>5</strong> → الخلية 5: [15, 25, 35, 5]</li>
+          <li>45 % 10 = <strong>5</strong> → الخلية 5: [15, 25, 35, 5, 45]</li>
+        </ul>
+        <p>جميعها تصطدم في الخلية 5 — Chaining يحل التصادم بالـ Linked List.</p>
+      </div></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">08</div>
+        <div class="q-text">ما الفرق بين Chaining وLinear Probing في معالجة التصادم؟</div>
+        <span class="q-tag hash">Hash</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Chaining:</strong> كل خلية تحوي Linked List — عند التصادم يُضاف العنصر لقائمة نفس الخلية. لا حد للعناصر في خلية واحدة.</p>
+        <p><strong>Linear Probing:</strong> عند التصادم، يبحث عن أول خلية فارغة باستخدام: <code>index = (index + 1) % size</code></p>
+        <p><strong>الفرق العملي:</strong> Chaining لا يملأ الجدول، Linear Probing يملأه ويسبب التجمّع (Clustering).</p>
+      </div></div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">09</div>
+        <div class="q-text">أدرج [10, 20, 30] في Hash Table بحجم 7 باستخدام Linear Probing</div>
+        <span class="q-tag hash">Hash</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <ul>
+          <li>10 % 7 = <strong>3</strong> → الخلية 3: [10] ✓</li>
+          <li>20 % 7 = <strong>6</strong> → الخلية 6: [20] ✓</li>
+          <li>30 % 7 = <strong>2</strong> → الخلية 2: [30] ✓</li>
+        </ul>
+        <p>لا تصادم هنا. مثال على تصادم: لو أضفنا 17 → 17%7=3 (محجوزة) → (3+1)%7=4 → الخلية 4.</p>
+      </div></div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">10</div>
+        <div class="q-text">ما معادلة إيجاد أب العقدة في Heap المُمثَّل بمصفوفة؟</div>
+        <span class="q-tag heap">Heap</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>معادلة الأب:</strong> <code>Parent = (index - 1) / 2</code></p>
+        <p><strong>مثال:</strong> العقدة في الفهرس 5 → أبوها في الفهرس (5-1)/2 = <strong>2</strong></p>
+        <p><strong>المعادلات الكاملة:</strong></p>
+        <ul>
+          <li>ابن يسار = <code>2 * index + 1</code></li>
+          <li>ابن يمين = <code>2 * index + 2</code></li>
+          <li>الأب = <code>(index - 1) / 2</code></li>
+        </ul>
+      </div></div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">11</div>
+        <div class="q-text">المصفوفة [90, 75, 80, 30, 60, 50, 20] — هل هي Max Heap صالحة؟ أثبت</div>
+        <span class="q-tag heap">Heap</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>نعم، هي Max Heap صالحة.</strong> تحقق من كل أب وأبنائه:</p>
+        <ul>
+          <li>فهرس 0 (90): ابن يسار [1]=75, ابن يمين [2]=80 → 90>75 و 90>80 ✓</li>
+          <li>فهرس 1 (75): ابن يسار [3]=30, ابن يمين [4]=60 → 75>30 و 75>60 ✓</li>
+          <li>فهرس 2 (80): ابن يسار [5]=50, ابن يمين [6]=20 → 80>50 و 80>20 ✓</li>
+        </ul>
+        <p>كل أب أكبر من أبنائه → <strong>Max Heap صالحة ✓</strong></p>
+      </div></div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">12</div>
+        <div class="q-text">أضف العنصر 95 لـ Max Heap [90, 75, 80, 30, 60, 50, 20] — أظهر عملية الـ Swap Up</div>
+        <span class="q-tag heap">Heap</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>الخطوات:</strong></p>
+        <ol>
+          <li>أضف 95 في النهاية: [90, 75, 80, 30, 60, 50, 20, <strong>95</strong>] — الفهرس 7</li>
+          <li>أبو الفهرس 7 = (7-1)/2 = 3 → arr[3] = 30. 95 > 30 → <strong>Swap</strong></li>
+          <li>[90, 75, 80, <strong>95</strong>, 60, 50, 20, <strong>30</strong>] — الآن 95 في الفهرس 3</li>
+          <li>أبو الفهرس 3 = (3-1)/2 = 1 → arr[1] = 75. 95 > 75 → <strong>Swap</strong></li>
+          <li>[90, <strong>95</strong>, 80, <strong>75</strong>, 60, 50, 20, 30] — الآن 95 في الفهرس 1</li>
+          <li>أبو الفهرس 1 = 0 → arr[0] = 90. 95 > 90 → <strong>Swap</strong></li>
+          <li>[<strong>95</strong>, <strong>90</strong>, 80, 75, 60, 50, 20, 30] ✓</li>
+        </ol>
+      </div></div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">13</div>
+        <div class="q-text">أي Traversal لـ BST يعطي العناصر مرتّبة تصاعدياً؟</div>
+        <span class="q-tag ds">BST</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Inorder Traversal</strong> — ترتيب الزيارة: يسار ← جذر ← يمين</p>
+        <p>على الشجرة [جذر=8, يسار=4, يمين=12, ...]: Inorder = 2, 4, 6, 8, 12, 15</p>
+        <p>هذه الخاصية مضمونة رياضياً بسبب تعريف BST نفسه — اليسار دائماً أصغر، اليمين دائماً أكبر.</p>
+      </div></div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">14</div>
+        <div class="q-text">أدرج [50, 30, 70, 20, 40, 60, 80] في BST ثم أجرِ Inorder Traversal</div>
+        <span class="q-tag ds">BST</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>الإدراج:</strong></p>
+        <ul>
+          <li>50 → جذر</li>
+          <li>30 < 50 → يسار 50</li>
+          <li>70 > 50 → يمين 50</li>
+          <li>20 < 50 < 30 → يسار 30</li>
+          <li>40 < 50، 40 > 30 → يمين 30</li>
+          <li>60 > 50، 60 < 70 → يسار 70</li>
+          <li>80 > 50، 80 > 70 → يمين 70</li>
+        </ul>
+        <p><strong>Inorder (L-Root-R):</strong> 20, 30, 40, 50, 60, 70, 80 ← مرتّب تصاعدياً ✓</p>
+      </div></div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">15</div>
+        <div class="q-text">ما الفرق بين DFS وBFS؟ وأي هيكل بيانات يستخدم كل منهما؟</div>
+        <span class="q-tag graph">Graph</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+          <tr style="background:var(--bg2)"><th style="padding:.4rem .6rem;border:1px solid var(--border)">الخاصية</th><th style="padding:.4rem .6rem;border:1px solid var(--border)">DFS</th><th style="padding:.4rem .6rem;border:1px solid var(--border)">BFS</th></tr>
+          <tr><td style="padding:.4rem .6rem;border:1px solid var(--border)">الاستراتيجية</td><td style="padding:.4rem .6rem;border:1px solid var(--border)">بعمق — يذهب لآخر نقطة</td><td style="padding:.4rem .6rem;border:1px solid var(--border)">بعرض — مستوى بمستوى</td></tr>
+          <tr><td style="padding:.4rem .6rem;border:1px solid var(--border)">هيكل البيانات</td><td style="padding:.4rem .6rem;border:1px solid var(--border)"><strong>Stack</strong></td><td style="padding:.4rem .6rem;border:1px solid var(--border)"><strong>Queue</strong></td></tr>
+          <tr><td style="padding:.4rem .6rem;border:1px solid var(--border)">يجد أقصر مسار؟</td><td style="padding:.4rem .6rem;border:1px solid var(--border)">لا</td><td style="padding:.4rem .6rem;border:1px solid var(--border)">نعم (مسار غير موزون)</td></tr>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">16</div>
+        <div class="q-text">Graph: 1→[2,3], 2→[4,5], 3→[6]. ابدأ BFS من 1 وأظهر ترتيب الزيارة</div>
+        <span class="q-tag graph">Graph</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>BFS يستخدم Queue:</strong></p>
+        <ol>
+          <li>ابدأ: Queue=[1], Visited={1}</li>
+          <li>أخرج 1، أضف جيرانه [2,3]: Queue=[2,3], Visited={1,2,3}</li>
+          <li>أخرج 2، أضف جيرانه [4,5]: Queue=[3,4,5], Visited={1,2,3,4,5}</li>
+          <li>أخرج 3، أضف جيرانه [6]: Queue=[4,5,6], Visited={1,2,3,4,5,6}</li>
+          <li>أخرج 4 (لا جيران جدد)، أخرج 5، أخرج 6</li>
+        </ol>
+        <p><strong>ترتيب الزيارة: 1, 2, 3, 4, 5, 6</strong></p>
+      </div></div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">17</div>
+        <div class="q-text">Graph: 1→[2,3], 2→[4,5], 3→[6]. ابدأ DFS من 1 وأظهر ترتيب الزيارة</div>
+        <span class="q-tag graph">Graph</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>DFS يستخدم Stack:</strong></p>
+        <ol>
+          <li>Stack=[1] → زُر 1، أضف [3,2]: Stack=[3,2]</li>
+          <li>أخرج 2 → زُر 2، أضف [5,4]: Stack=[3,5,4]</li>
+          <li>أخرج 4 → زُر 4 (لا جيران): Stack=[3,5]</li>
+          <li>أخرج 5 → زُر 5 (لا جيران): Stack=[3]</li>
+          <li>أخرج 3 → زُر 3، أضف [6]: Stack=[6]</li>
+          <li>أخرج 6 → زُر 6: Stack=[]</li>
+        </ol>
+        <p><strong>ترتيب الزيارة: 1, 2, 4, 5, 3, 6</strong></p>
+      </div></div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">18</div>
+        <div class="q-text">ما الفرق بين Stable وUnstable Sorting? أعطِ أمثلة</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Stable Sort:</strong> يحافظ على الترتيب النسبي للعناصر المتساوية.</p>
+        <p><strong>Unstable Sort:</strong> قد يغيّر الترتيب النسبي للعناصر المتساوية.</p>
+        <ul>
+          <li><strong>Stable:</strong> Bubble Sort, Insertion Sort, Merge Sort, Counting Sort</li>
+          <li><strong>Unstable:</strong> Selection Sort, Quick Sort</li>
+        </ul>
+        <p><strong>مثال:</strong> [3a, 1, 3b, 2] → Stable يبقي 3a قبل 3b دائماً. Unstable قد يقلبهما.</p>
+      </div></div>
+    </div>
+
+    <!-- Q19 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">19</div>
+        <div class="q-text">طبّق Counting Sort على [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>maxVal = 9، حجم count = 10</strong></p>
+        <p>1. عدّ التكرارات: count = [0,2,1,2,1,2,1,0,0,1]</p>
+        <p>(0→0, 1→2, 2→1, 3→2, 4→1, 5→2, 6→1, 9→1)</p>
+        <p>2. تراكمي: count = [0,2,3,5,6,8,9,9,9,10]</p>
+        <p>3. النتيجة: [1, 1, 2, 3, 3, 4, 5, 5, 6, 9] ✓</p>
+      </div></div>
+    </div>
+
+    <!-- Q20 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">20</div>
+        <div class="q-text">ما تمثيل Graph بـ Adjacency List لهذه الحواف: 1-2, 1-3, 2-4, 3-4?</div>
+        <span class="q-tag graph">Graph</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Adjacency List (vector&lt;vector&lt;int&gt;&gt;):</strong></p>
+        <div class="formula-box">
+          adj[1] = [2, 3]<br>
+          adj[2] = [1, 4]<br>
+          adj[3] = [1, 4]<br>
+          adj[4] = [2, 3]
+        </div>
+        <p>كل عقدة تخزّن قائمة جيرانها. هذا أكثر كفاءةً من Adjacency Matrix للرسوم البيانية المتفرقة (Sparse Graphs).</p>
+      </div></div>
+    </div>
+
+    <!-- Q21 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">21</div>
+        <div class="q-text">لماذا يُعدّ Queue (طابور) الهيكل الأنسب لـ BFS؟</div>
+        <span class="q-tag graph">Graph</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p>BFS يعمل على مبدأ <strong>FIFO</strong> — يعالج العقد بترتيب وصولها. أول عقدة تُكتشف أول عقدة تُعالَج.</p>
+        <p>هذا يضمن أننا نزور كل عقد المستوى الحالي قبل الانتقال للمستوى التالي — وهو تعريف BFS بالضبط.</p>
+        <p>لو استخدمنا Stack (LIFO) بدلاً منه، سنحصل على DFS تلقائياً!</p>
+      </div></div>
+    </div>
+
+    <!-- Q22 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">22</div>
+        <div class="q-text">ما خطوات Binary Search على [1,3,5,7,9,11,13] للبحث عن 7؟</div>
+        <span class="q-tag sort">بحث</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <ol>
+          <li>low=0, high=6 → mid=3 → arr[3]=7 == target → <strong>وُجد في الفهرس 3 ✓</strong></li>
+        </ol>
+        <p>مثال أصعب — البحث عن 11:</p>
+        <ol>
+          <li>low=0, high=6 → mid=3 → arr[3]=7 &lt; 11 → ابحث يميناً → low=4</li>
+          <li>low=4, high=6 → mid=5 → arr[5]=11 == 11 → <strong>وُجد في الفهرس 5 ✓</strong></li>
+        </ol>
+      </div></div>
+    </div>
+
+    <!-- Q23 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">23</div>
+        <div class="q-text">ما Preorder وPostorder Traversal للشجرة [جذر=8, يسار=4, يمين=12, يسار.يسار=2, يسار.يمين=6]؟</div>
+        <span class="q-tag ds">BST</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Preorder (Root-Left-Right):</strong> 8, 4, 2, 6, 12</p>
+        <p><strong>Inorder (Left-Root-Right):</strong> 2, 4, 6, 8, 12 ← مرتّب</p>
+        <p><strong>Postorder (Left-Right-Root):</strong> 2, 6, 4, 12, 8</p>
+        <p>حيلة: Preorder يبدأ بالجذر دائماً. Postorder ينتهي بالجذر دائماً.</p>
+      </div></div>
+    </div>
+
+    <!-- Q24 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">24</div>
+        <div class="q-text">ما شرط إجراء Binary Search؟ وماذا يحدث لو لم يتحقق؟</div>
+        <span class="q-tag sort">بحث</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>الشرط:</strong> المصفوفة يجب أن تكون <strong>مرتّبة تصاعدياً (أو تنازلياً)</strong> قبل تطبيق Binary Search.</p>
+        <p><strong>لو لم يتحقق:</strong> الخوارزمية قد ترجع -1 (لم يوجد) حتى لو العنصر موجود فعلاً — نتيجة خاطئة تماماً.</p>
+        <p><strong>الحل:</strong> رتّب أولاً (Merge Sort مثلاً O(n log n)) ثم ابحث بـ Binary Search O(log n).</p>
+      </div></div>
+    </div>
+
+    <!-- Q25 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">25</div>
+        <div class="q-text">ما تعقيد عمليات Queue (enqueue, dequeue, front) بالتنفيذ بالمصفوفة؟</div>
+        <span class="q-tag ds">Queue</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <ul>
+          <li><strong>enqueue() / push():</strong> O(1) — نضيف في rear فقط</li>
+          <li><strong>dequeue() / pop():</strong> O(1) — نحذف من front فقط</li>
+          <li><strong>front():</strong> O(1) — نقرأ arr[front] مباشرة</li>
+          <li><strong>size():</strong> O(1) — نحسب rear - front + 1</li>
+        </ul>
+        <p>جميع عمليات Queue الأساسية تعمل بـ O(1) — هذا ميزة رئيسية لهيكل الطابور.</p>
+      </div></div>
+    </div>
+
+    <!-- Q26 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">26</div>
+        <div class="q-text">ما Radix Sort؟ كيف يرتّب [170, 45, 75, 90, 802, 24, 2, 66]؟</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p>Radix Sort يرتّب رقماً رقماً من الأقل أهمية (آحاد) للأكثر (مئات) باستخدام Counting Sort في كل مرحلة:</p>
+        <p><strong>مرحلة الآحاد:</strong> [170, 90, 802, 2, 24, 45, 75, 66]</p>
+        <p><strong>مرحلة العشرات:</strong> [2, 802, 24, 45, 66, 170, 75, 90]</p>
+        <p><strong>مرحلة المئات:</strong> [2, 24, 45, 66, 75, 90, 170, 802] ✓</p>
+      </div></div>
+    </div>
+
+    <!-- Q27 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">27</div>
+        <div class="q-text">ما الفرق بين Max Heap وMin Heap؟ ومتى تستخدم كلاً منهما؟</div>
+        <span class="q-tag heap">Heap</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>Max Heap:</strong> الجذر = الأكبر. كل أب ≥ أبنائه. يُستخدم لاستخراج أكبر عنصر بسرعة (Priority Queue للأولوية العليا).</p>
+        <p><strong>Min Heap:</strong> الجذر = الأصغر. كل أب ≤ أبنائه. يُستخدم لاستخراج أصغر عنصر بسرعة (Dijkstra Algorithm).</p>
+        <p><strong>في كلا الحالتين:</strong> الإدراج والحذف بـ O(log n)، الوصول للأقصى/الأدنى بـ O(1).</p>
+      </div></div>
+    </div>
+
+    <!-- Q28 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">28</div>
+        <div class="q-text">ما هيكل تمثيل String في Hash Table؟ كيف تحسب hash("abc")؟</div>
+        <span class="q-tag hash">Hash</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>الطريقة:</strong> جمع قيم ASCII لكل حرف ثم تطبيق modulo.</p>
+        <div class="formula-box">
+          'a' = 97, 'b' = 98, 'c' = 99<br>
+          sum = 97 + 98 + 99 = 294<br>
+          hash("abc") = 294 % size
+        </div>
+        <p>إذا size=10: hash("abc") = 294 % 10 = <strong>4</strong></p>
+      </div></div>
+    </div>
+
+    <!-- Q29 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">29</div>
+        <div class="q-text">قارن تعقيد الزمن بين الخوارزميات المدروسة في جدول</div>
+        <span class="q-tag sort">ترتيب</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <div class="tbl-wrap"><table>
+          <tr><th>الخوارزمية</th><th>أفضل</th><th>متوسط</th><th>أسوأ</th><th>مساحة</th></tr>
+          <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr>
+          <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+          <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td></tr>
+          <tr><td>Counting Sort</td><td>O(n+k)</td><td>O(n+k)</td><td>O(n+k)</td><td>O(k)</td></tr>
+          <tr><td>Binary Search</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1)</td></tr>
+        </table></div>
+      </div></div>
+    </div>
+
+    <!-- Q30 -->
+    <div class="q-item">
+      <button class="q-trigger" onclick="toggleQ(this)">
+        <div class="q-num">30</div>
+        <div class="q-text">لديك [8, 3, 10, 1, 6] — أدرجها في BST وتحقق: هل 6 في الموضع الصحيح؟</div>
+        <span class="q-tag ds">BST</span>
+        <svg class="q-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="q-answer"><div class="q-answer-inner">
+        <p><strong>خطوات الإدراج:</strong></p>
+        <ul>
+          <li>8 → جذر</li>
+          <li>3 < 8 → يسار الجذر</li>
+          <li>10 > 8 → يمين الجذر</li>
+          <li>1 < 8، 1 < 3 → يسار 3</li>
+          <li>6 < 8، 6 > 3 → يمين 3</li>
+        </ul>
+        <p><strong>نعم، 6 في موضعه الصحيح</strong> — يمين 3 (لأن 6>3) ويسار 8 (لأن 6&lt;8).</p>
+        <p>Inorder للتحقق: 1, 3, 6, 8, 10 ← مرتّب ✓</p>
+      </div></div>
+    </div>
+
+  </div><!-- /questions-grid -->
+</section>
+
+<!-- ═══════════════════════════════════════════ PART 5: CHEAT SHEET ════ -->
+<section class="section-wrap" id="cheatsheet">
+  <div class="section-eyebrow">الجزء الخامس</div>
+  <h2 class="section-title">Cheat Sheet</h2>
+  <p class="section-sub">كل المعادلات والمفاهيم الأساسية في صفحة واحدة — احتفظ بها</p>
+
+  <div class="cheat-container">
+    <div class="cheat-title">📋 المرجع السريع — هياكل البيانات والخوارزميات</div>
+    <div class="cheat-grid">
+
+      <!-- Sorting Complexity -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">⏱ تعقيد الترتيب</div>
+        <div class="cheat-row"><span class="ck">Bubble Sort</span><span class="cv">O(n²) | Stable</span></div>
+        <div class="cheat-row"><span class="ck">Selection Sort</span><span class="cv">O(n²) | Unstable</span></div>
+        <div class="cheat-row"><span class="ck">Insertion Sort</span><span class="cv">O(n²) | Stable</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-row"><span class="ck">Merge Sort</span><span class="cv amber">O(n log n) ✓</span></div>
+        <div class="cheat-row"><span class="ck">Quick Sort</span><span class="cv amber">O(n log n) avg</span></div>
+        <div class="cheat-row"><span class="ck">Counting Sort</span><span class="cv blue">O(n+k)</span></div>
+        <div class="cheat-row"><span class="ck">Binary Search</span><span class="cv blue">O(log n)</span></div>
+      </div>
+
+      <!-- Heap Formulas -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">🌲 Heap — معادلات المصفوفة</div>
+        <div class="cheat-row"><span class="ck">ابن يسار</span><span class="cv">2*i + 1</span></div>
+        <div class="cheat-row"><span class="ck">ابن يمين</span><span class="cv">2*i + 2</span></div>
+        <div class="cheat-row"><span class="ck">الأب</span><span class="cv">(i-1) / 2</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-row"><span class="ck">Max Heap</span><span class="cv blue">جذر = أكبر</span></div>
+        <div class="cheat-row"><span class="ck">Min Heap</span><span class="cv blue">جذر = أصغر</span></div>
+        <div class="cheat-row"><span class="ck">إضافة</span><span class="cv">النهاية → Swap Up</span></div>
+        <div class="cheat-row"><span class="ck">حذف</span><span class="cv">استبدل + Swap Down</span></div>
+      </div>
+
+      <!-- Hash Table -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">🗂️ Hash Table</div>
+        <div class="cheat-row"><span class="ck">Division Method</span><span class="cv">key % size</span></div>
+        <div class="cheat-row"><span class="ck">String Hash</span><span class="cv">Σ ASCII % size</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-row"><span class="ck">Chaining</span><span class="cv blue">Linked List بكل خلية</span></div>
+        <div class="cheat-row"><span class="ck">Linear Probing</span><span class="cv">(i+1) % size</span></div>
+        <div class="cheat-row"><span class="ck">تصادم</span><span class="cv amber">عندما key%size = نفس الفهرس</span></div>
+      </div>
+
+      <!-- BST Traversals -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">🌳 BST Traversals</div>
+        <div class="cheat-row"><span class="ck">Inorder</span><span class="cv blue">L → Root → R = مرتّب</span></div>
+        <div class="cheat-row"><span class="ck">Preorder</span><span class="cv">Root → L → R</span></div>
+        <div class="cheat-row"><span class="ck">Postorder</span><span class="cv">L → R → Root</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-row"><span class="ck">إدراج</span><span class="cv">أصغر=يسار | أكبر=يمين</span></div>
+        <div class="cheat-row"><span class="ck">بحث</span><span class="cv blue">O(log n) متوازنة</span></div>
+      </div>
+
+      <!-- Graph & Queue -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">🔗 Graph Traversals</div>
+        <div class="cheat-row"><span class="ck">BFS</span><span class="cv blue">Queue — FIFO — بعرض</span></div>
+        <div class="cheat-row"><span class="ck">DFS</span><span class="cv amber">Stack — LIFO — بعمق</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-block-title" style="margin-top:.4rem">📦 Queue Operations</div>
+        <div class="cheat-row"><span class="ck">enqueue</span><span class="cv">أضف للخلف</span></div>
+        <div class="cheat-row"><span class="ck">dequeue</span><span class="cv">احذف من الأمام</span></div>
+        <div class="cheat-row"><span class="ck">front()</span><span class="cv">arr[front]</span></div>
+        <div class="cheat-row"><span class="ck">FIFO</span><span class="cv blue">First In First Out</span></div>
+      </div>
+
+      <!-- Key Rules -->
+      <div class="cheat-block">
+        <div class="cheat-block-title">⚠️ قواعد الامتحان الذهبية</div>
+        <div class="cheat-row"><span class="ck">Merge mid</span><span class="cv">(left+right)/2</span></div>
+        <div class="cheat-row"><span class="ck">Quick Pivot</span><span class="cv">موضعه النهائي بعد Partition</span></div>
+        <div class="cheat-row"><span class="ck">Counting Stable</span><span class="cv">مرر من اليمين للشمال</span></div>
+        <hr class="cheat-divider">
+        <div class="cheat-row"><span class="ck">Binary Search</span><span class="cv amber">مصفوفة مرتّبة أولاً!</span></div>
+        <div class="cheat-row"><span class="ck">Queue Full</span><span class="cv">rear == SIZE-1</span></div>
+        <div class="cheat-row"><span class="ck">Inorder=Sorted</span><span class="cv blue">✓ دائماً في BST</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+</main>
+
+<script>
+// ── Dark Mode ──
+const darkBtn = document.getElementById('darkToggle');
+function applyDark(on) {
+  document.body.classList.toggle('dark', on);
+  darkBtn.textContent = on ? '☀️' : '🌙';
+  localStorage.setItem('dsa-dark', on ? '1' : '0');
+}
+darkBtn.addEventListener('click', () => applyDark(!document.body.classList.contains('dark')));
+if (localStorage.getItem('dsa-dark') === '1') applyDark(true);
+
+// ── Nav scroll helper ──
+function scrollTo(sel) {
+  const el = document.querySelector(sel);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── DS Search Filter ──
+function filterDS(val) {
+  const term = val.toLowerCase().trim();
+  document.querySelectorAll('.ds-card').forEach(card => {
+    const name = (card.dataset.name || '') + card.innerText;
+    card.classList.toggle('hidden', term !== '' && !name.toLowerCase().includes(term));
+  });
+}
+
+// ── Q Accordion ──
+function toggleQ(btn) {
+  const item = btn.closest('.q-item');
+  item.classList.toggle('open');
+}
+
+// ── Animate on scroll ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'none';
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.sort-card, .ds-card, .q-item, .mistake-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+  el.style.transition = 'opacity .4s ease, transform .4s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
